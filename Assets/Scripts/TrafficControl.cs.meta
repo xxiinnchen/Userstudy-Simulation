@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f161cd55d8ec642079cbe75d4e00faf4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - droneBaseObject: {fileID: 2481423680923819315, guid: 80635022dd80ed54f921be27699760ed,
+      type: 3}
+  - eventBaseObject: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,414 @@
+﻿#define IS_USER_STUDY
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using System.IO;
+
+using UnityEngine.SceneManagement;
+
+
+public class TrafficControl : MonoBehaviour
+{
+    public static string seed_filename = "Assets/Scripts/SEED.txt";
+    public static StreamReader reader = new StreamReader(seed_filename);
+    static string seed_string = reader.ReadLine();
+    public static int SEED = strToInt(seed_string);
+
+    public static GameObject worldobject;
+    
+
+    public GameObject droneBaseObject;
+    public GameObject eventBaseObject;
+   
+    public int numDrones = 10;
+    public int EVENT_INTERVAL = 1;
+    public int EXIT_TIME = 180;
+
+    // Drone and Event Dictionaries 
+    public static Dictionary<int, Drone> dronesDict = new Dictionary<int, Drone>();
+    public static Dictionary<int, Event> eventsDict = new Dictionary<int, Event>();
+
+    public OrderedSet<int> waitingEventsId = new OrderedSet<int>();
+    public HashSet<int> ongoingEventsId = new HashSet<int>();
+
+    public OrderedSet<int> availableDronesId = new OrderedSet<int>();
+    public HashSet<int> workingDronesId = new HashSet<int>();
+
+    public static Vector3[] shelves = Utility.shelves;
+    public static Vector3[] parkinglot = Utility.parking;
+
+
+    // User Data variables
+
+    private int systemError = 0;
+    private int userError = 0;
+    //private int timeCounter = 0;
+    private float timeCounter = 0;
+    private float eventTimer = 0;
+    private float lastPrint = 0;
+    private int cleanCounter = 0;
+    private int successEventCounter = 0;
+    private int totalEventCounter = 0;
+
+    // Functional Variables
+    private float AVE_TIME;
+    private System.Random rnd;
+
+    public static int strToInt(string str)
+    {
+        int numVal= -1;
+        try
+        {
+            numVal = Int32.Parse(str);
+        }
+        catch (FormatException e)
+        {
+            Debug.Log("Invalid Seed file." + e);
+        }
+        Debug.Log("Retreiving Seed from SEED.txt: " + numVal);
+        reader.Close();
+    
+        return numVal;
+    }
+
+    public int GenRandEvent()
+    {
+        int idx = -1;
+        while (idx == -1)
+        {
+            idx = rnd.Next(shelves.Length);
+            idx = waitingEventsId.Contains(idx) ? -1 : idx;
+        }
+
+        return idx;
+    }
+
+    public void initDrones(int num)
+    {
+        //Debug.Log("Initializing Drones");
+        int units = 5;
+        int rowcapacity = 5;
+        int parkingInterval = units / rowcapacity;
+        int rowNeeded = num / rowcapacity;
+        for (int i = 0; i < num; i++)
+        {
+            Drone newDrone = new Drone(i, parkinglot[parkingInterval * i]);
+            dronesDict.Add(i, newDrone);
+            availableDronesId.Add(i);
+        } 
+    }
+
+
+    // Use this for initialization
+    void Start()
+    {
+        
+        Debug.Log("Traffic Control: Start()!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        //seed = 2;
+        AVE_TIME = Utility.AVGTIME;
+        Debug.Log(SEED);
+        rnd = new System.Random(SEED);
+
+        worldobject = this.gameObject;
+        dronesDict = new Dictionary<int, Drone>();
+        initDrones(numDrones);
+
+        //Debug.Log("Initializing Events");
+        for (int i = 0; i < shelves.Length; i++)
+        {
+            Event newEvent = new Event(i, shelves[i]);
+            eventsDict.Add(i, newEvent);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (timeCounter - lastPrint > 1)
+        {
+            //Debug.Log("Update time: " + timeCounter);
+            lastPrint = timeCounter;
+        }
+
+        //Debug.LogFormat("{0} {1}", eventTimer, EVENT_INTERVAL);
+        // Check if to generate new random event 
+        if (eventTimer > EVENT_INTERVAL)
+        {
+            eventTimer = 0;
+            //Debug.Log("New Event Attempt");
+
+            if (waitingEventsId.Count + ongoingEventsId.Count < shelves.Length - 1)
+            {
+              //  Debug.Log("New Event Created");
+
+                int newIdx = GenRandEvent();
+                //Event newWaitingEvent = eventsDict[newIdx];
+                waitingEventsId.Add(newIdx);
+
+                totalEventCounter++;
+            }
+        }
+
+        if (availableDronesId.Count > 0 && waitingEventsId.Count > 0)
+        {
+            //Debug.Log("Assigning event to drone");
+
+            int e = waitingEventsId.Next();
+            int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
+
+            dronesDict[d].AddEvent(eventsDict[e]);
+            // Debug.Log("assign event " + e + " to drone " + d + " with direction: " + dronesDict[d].direction);
+
+            availableDronesId.Remove(d);
+            workingDronesId.Add(d);
+            waitingEventsId.Remove(e);
+            ongoingEventsId.Add(e);
+        }
+
+        // apply force meanwhile check collision 
+        foreach (int i in workingDronesId)
+        {
+            //Debug.Log("Drone Collision Loop 1");
+            foreach (int j in workingDronesId)
+            {
+                // <Changed>
+                if (i == j)
+                {
+                    continue;
+                }
+                //Debug.Log("Drone Collision Loop 2");
+                Vector3 delta = dronesDict[i].gameObjectPointer.transform.Find("pCube2").gameObject.transform.position - dronesDict[j].gameObjectPointer.transform.Find("pCube2").gameObject.transform.position;
+                float dis = delta.magnitude;
+
+                //if (Utility.IsLessThan(delta, Utility.CUTOFF_INTERACT))
+                if (dis < Utility.INTERACT_DIM)
+                {
+                    //if (Utility.IsLessThan(delta, Utility.COLLISION_BOUND))
+                    if (dis < Utility.BOUND_DIM)
+                    {
+                        //Debug.Log("2. DroneID " + dronesDict[i].droneId + " Drone Collision");
+
+                        userError++;
+                        dronesDict[i].status = Drone.DroneStatus.COLLIDE;
+                        dronesDict[j].status = Drone.DroneStatus.COLLIDE;
+                    }
+                    else
+                    {
+                        systemError++;
+                    }
+                }
+                // </Changed>
+
+            }
+            // update direction
+            dronesDict[i].direction = Vector3.Normalize(dronesDict[i].dstPos - dronesDict[i].curPos);
+        }
+
+        // check status
+        // move every working drone
+        for (int i = 0; i < numDrones; i++)
+        {
+            Drone currDrone = dronesDict[i];
+            Drone.DroneStatus status = currDrone.status;
+            if (status == Drone.DroneStatus.PARKED)
+            {
+                continue;
+            }
+            else if (status == Drone.DroneStatus.COLLIDE)
+            {
+                // Repark drone
+                currDrone.curPos = currDrone.parkingPos;
+                // check the event can be added back
+                int eid = currDrone.eventId;
+                waitingEventsId.Add(eid);
+
+                //Event curEvent = eventsDict[currDrone.eventId];
+
+                currDrone.status = Drone.DroneStatus.PARKED;
+            }
+
+
+            Drone.MoveStatus moveStatus = currDrone.Move();
+
+            if (i == 1)
+            {
+                //Debug.Log("5. Drone " + dronesDict[i].droneId + " moveStatus " + moveStatus + " status "+ dronesDict[i].status + " Speed " + dronesDict[i].SPEED + " Dirc" + dronesDict[i].direction + " Dist " + Utility.CalDistance(dronesDict[i].curPos, dronesDict[i].eventPos));
+
+            }
+
+            if (moveStatus == Drone.MoveStatus.END_TO_SHELF)  // drone status 2 --> 3
+            {
+                //Debug.Log("0. DroneID " + dronesDict[i].droneId + " One -way trip success");
+                //Event curEvent = eventsDict[dronesDict[i].eventId];
+                ongoingEventsId.Remove(currDrone.eventId);
+            }
+            else if (moveStatus == Drone.MoveStatus.END_WHOLE_TRIP)  // end of whole trip
+            {
+                Debug.Log("1. DroneID " + currDrone.droneId + " Two-way trip success");
+                successEventCounter++;
+            }
+
+            if (currDrone.status == Drone.DroneStatus.PARKED)
+            {
+                workingDronesId.Remove(i);
+                availableDronesId.Add(i);
+                ongoingEventsId.Remove(currDrone.eventId);
+            }
+        }
+        // update counter
+        timeCounter += Time.deltaTime;
+        eventTimer += Time.deltaTime;
+        cleanCounter++;
+
+#if IS_USER_STUDY
+        if (SEED <= 3)
+        {
+            if (timeCounter >= EXIT_TIME)
+            {
+                Debug.Log("====================End of a 3 minute user study=============================");
+                //Debug.Log(SEED);
+                ResetSim();
+                
+                ReloadScene();
+                
+
+                //QuitGame();
+            }
+        } else
+        {
+            Debug.Log("???????????????????????????");
+            QuitGame();
+        }
+#endif
+    }
+
+
+    void UpdateSeed()
+    {
+        StreamWriter writer = new StreamWriter(seed_filename, false);
+        int newSeed = SEED + 1;
+        writer.WriteLine(newSeed.ToString());
+
+        writer.Close();
+    }
+
+
+    void ReloadScene()
+    {
+        UpdateSeed();
+
+        
+
+        seed_filename = "Assets/Scripts/SEED.txt";
+        reader = new StreamReader(seed_filename);
+        seed_string = reader.ReadLine();
+        SEED = strToInt(seed_string);
+
+
+        // Drone and Event Dictionaries 
+        dronesDict = new Dictionary<int, Drone>();
+        eventsDict = new Dictionary<int, Event>();
+
+        waitingEventsId = new OrderedSet<int>();
+        ongoingEventsId = new HashSet<int>();
+
+        availableDronesId = new OrderedSet<int>();
+        workingDronesId = new HashSet<int>();
+
+        shelves = Utility.shelves;
+        parkinglot = Utility.parking;
+
+
+        // User Data variables
+
+        systemError = 0;
+        userError = 0;
+        timeCounter = 0;
+        eventTimer = 0;
+        cleanCounter = 0;
+        successEventCounter = 0;
+        totalEventCounter = 0;
+
+        //rnd = new System.Random(SEED);
+
+        //UnityEditor.PrefabUtility.ResetToPrefabState(this.gameObject);
+        UnityEditor.PrefabUtility.RevertObjectOverride(gameObject, UnityEditor.InteractionMode.AutomatedAction);
+
+        SceneManager.LoadScene("Assets/Scenes/SampleScene.unity");
+    }
+
+
+    void ResetSim()
+    {
+        float successRate = successEventCounter / numDrones;
+
+        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test2.txt";
+        // write to log file
+        StreamWriter fileWriter = new StreamWriter(filename, true);
+
+        fileWriter.WriteLine("CURRENT TIME: " + System.DateTime.Now);
+        fileWriter.WriteLine("==========Basic Parameters==========");
+        fileWriter.WriteLine("Interface " + SceneManager.GetActiveScene().name);
+        fileWriter.WriteLine("FPS: " + 1 / Time.deltaTime);
+        fileWriter.WriteLine("Drone speed: " + Utility.DRONE_SPEED);
+        //fileWriter.WriteLine("Seed: " + SEED);
+        fileWriter.WriteLine("Number of drones: " + numDrones);
+        fileWriter.WriteLine("Average time: " + AVE_TIME);
+        fileWriter.WriteLine("Event interval: " + EVENT_INTERVAL);
+        fileWriter.WriteLine("Number of events: " + totalEventCounter);
+
+        fileWriter.WriteLine("==========User Study Data==========");
+        fileWriter.WriteLine("Seed: " + SEED);
+        fileWriter.WriteLine("User error: " + userError / 2);
+        fileWriter.WriteLine("Number success events: " + successEventCounter);
+        fileWriter.WriteLine(" ");
+
+        fileWriter.Close();
+    }
+
+
+
+    void OnApplicationQuit()
+    {
+        float successRate = successEventCounter / numDrones;
+        
+        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test1.txt"; 
+        // write to log file
+        StreamWriter fileWriter = new StreamWriter(filename, true);
+
+        fileWriter.WriteLine("CURRENT TIME: " + System.DateTime.Now);
+        fileWriter.WriteLine("==========Basic Parameters==========");
+        fileWriter.WriteLine("Interface " + SceneManager.GetActiveScene().name);
+        fileWriter.WriteLine("FPS: " + 1 / Time.deltaTime);
+        fileWriter.WriteLine("Drone speed: " + Utility.DRONE_SPEED);
+        //fileWriter.WriteLine("Seed: " + SEED);
+        fileWriter.WriteLine("Number of drones: " + numDrones);
+        fileWriter.WriteLine("Average time: " + AVE_TIME);
+        fileWriter.WriteLine("Event interval: " + EVENT_INTERVAL);
+        fileWriter.WriteLine("Number of events: " + totalEventCounter);
+
+        fileWriter.WriteLine("==========User Study Data==========");
+        fileWriter.WriteLine("Seed: " + SEED);
+        fileWriter.WriteLine("User error: " + userError / 2);
+        fileWriter.WriteLine("Number success events: " + successEventCounter);
+        fileWriter.WriteLine(" ");
+
+        fileWriter.Close();
+
+
+    }
+
+    public void QuitGame()
+    {
+        // save any game data here
+#if UNITY_EDITOR
+        // Application.Quit() does not work in the editor so
+        // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+         Application.Quit();
+#endif
+    }
+}
