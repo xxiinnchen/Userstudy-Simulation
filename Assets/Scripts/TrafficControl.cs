@@ -42,8 +42,8 @@ public class TrafficControl : MonoBehaviour
 
     // User Data variables
 
-    private int systemError = 0;
-    private int userError = 0;
+    public int systemError = 0;
+    public int userError = 0;
     //private int timeCounter = 0;
     private float timeCounter = 0;
     private float eventTimer = 0;
@@ -110,6 +110,8 @@ public class TrafficControl : MonoBehaviour
         AVE_TIME = Utility.AVGTIME;
         Debug.Log(SEED);
         rnd = new System.Random(SEED);
+        waitingEventsId.rnd = new System.Random(SEED);
+        availableDronesId.rnd = new System.Random(SEED);
 
         worldobject = this.gameObject;
         dronesDict = new Dictionary<int, Drone>();
@@ -124,7 +126,7 @@ public class TrafficControl : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (timeCounter - lastPrint > 1)
         {
@@ -258,12 +260,12 @@ public class TrafficControl : MonoBehaviour
             }
         }
         // update counter
-        timeCounter += Time.deltaTime;
-        eventTimer += Time.deltaTime;
+        timeCounter += Time.fixedDeltaTime;
+        eventTimer += Time.fixedDeltaTime;
         cleanCounter++;
 
 #if IS_USER_STUDY
-        if (SEED <= 3)
+        if (SEED <= 5)
         {
             if (timeCounter >= EXIT_TIME)
             {
@@ -344,7 +346,7 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
 
-        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test2.txt";
+        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test3.txt";
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
 
@@ -361,7 +363,8 @@ public class TrafficControl : MonoBehaviour
 
         fileWriter.WriteLine("==========User Study Data==========");
         fileWriter.WriteLine("Seed: " + SEED);
-        fileWriter.WriteLine("User error: " + userError / 2);
+        fileWriter.WriteLine("System error: " + systemError);
+        fileWriter.WriteLine("User error: " + userError);
         fileWriter.WriteLine("Number success events: " + successEventCounter);
         fileWriter.WriteLine(" ");
 
@@ -374,7 +377,7 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
         
-        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test1.txt"; 
+        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test3.txt"; 
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
 
@@ -391,7 +394,8 @@ public class TrafficControl : MonoBehaviour
 
         fileWriter.WriteLine("==========User Study Data==========");
         fileWriter.WriteLine("Seed: " + SEED);
-        fileWriter.WriteLine("User error: " + userError / 2);
+        fileWriter.WriteLine("System error: " + systemError);
+        fileWriter.WriteLine("User error: " + userError);
         fileWriter.WriteLine("Number success events: " + successEventCounter);
         fileWriter.WriteLine(" ");
 

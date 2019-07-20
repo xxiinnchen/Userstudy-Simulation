@@ -93,8 +93,8 @@ public class Utility : MonoBehaviour
 
     void Awake()
     {
-        //Debug.Log("Utility: Awake()");
-        DELTATIME = Time.deltaTime;
+        Debug.Log("Utility: Awake()");
+        DELTATIME = Time.fixedDeltaTime;
         DRONE_SPEED = (INTERACT_DIM - BOUND_DIM) / INTERACT_TIME * DELTATIME;
      
     }

@@ -1874,3 +1874,101 @@ Seed: 4
 User error: 0
 Number success events: 0
  
+CURRENT TIME: 7/19/2019 3:42:17 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 61.65684
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 16
+==========User Study Data==========
+Seed: 1
+User error: 5
+Number success events: 0
+ 
+CURRENT TIME: 7/19/2019 3:45:34 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.37043
+Drone speed: 0.01490796
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 0
+==========User Study Data==========
+Seed: 4
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 7/19/2019 3:50:01 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 10
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 0
+==========User Study Data==========
+Seed: 4
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 7/19/2019 3:50:12 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 10
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 0
+==========User Study Data==========
+Seed: 4
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 7/19/2019 3:50:32 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 10
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 0
+==========User Study Data==========
+Seed: 4
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 7/19/2019 3:51:40 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 10
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 0
+==========User Study Data==========
+Seed: 4
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 7/19/2019 3:56:47 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.36278
+Drone speed: 0.0415638
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 6
+==========User Study Data==========
+Seed: 3
+User error: 0
+Number success events: 0
+ 
