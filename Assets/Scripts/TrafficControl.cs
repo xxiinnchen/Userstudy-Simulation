@@ -143,6 +143,7 @@ public class TrafficControl : MonoBehaviour
 
                 int newIdx = GenRandEvent();
                 //Event newWaitingEvent = eventsDict[newIdx];
+                Debug.Log("Adding to event" + newIdx);
                 waitingEventsId.Add(newIdx);
 
                 totalEventCounter++;
@@ -262,12 +263,13 @@ public class TrafficControl : MonoBehaviour
                 //Debug.Log("0. DroneID " + dronesDict[i].droneId + " One -way trip success");
                 //Event curEvent = eventsDict[dronesDict[i].eventId];
                 ongoingEventsId.Remove(currDrone.eventId);
+                waitingEventsId.Remove(currDrone.eventId);
             }
             else if (moveStatus == Drone.MoveStatus.END_WHOLE_TRIP)  // end of whole trip
             {
                 //Debug.Log("1. DroneID " + currDrone.droneId + " Two-way trip success");
+                ongoingEventsId.Remove(currDrone.eventId);
                 waitingEventsId.Remove(currDrone.eventId);
-                Debug.Log("Waiting event: " + waitingEventsId);
                 successEventCounter++;
             }
 
@@ -386,14 +388,14 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine("==========User Study Data==========");
         fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("System error: " + systemError);
-        fileWriter.WriteLine("User error: " + userError);
-        if (userError == 18)
+        fileWriter.WriteLine("User error: " + userError / 2);
+        if ((userError / 2) == 18)
         {
             fileWriter_success.WriteLine("==========User Study Data==========");
             fileWriter_success.WriteLine("Number of drones: " + numDrones);
             fileWriter_success.WriteLine("Seed: " + SEED);
             fileWriter_success.WriteLine("System error: " + systemError);
-            fileWriter_success.WriteLine("User error: " + userError);
+            fileWriter_success.WriteLine("User error: " + userError / 2);
         }
         fileWriter.WriteLine("Number success events: " + successEventCounter);
         fileWriter.WriteLine(" ");
@@ -425,7 +427,7 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine("==========User Study Data==========");
         fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("System error: " + systemError);
-        fileWriter.WriteLine("User error: " + userError);
+        fileWriter.WriteLine("User error: " + userError / 2);
         fileWriter.WriteLine("Number success events: " + successEventCounter);
         fileWriter.WriteLine(" ");
 
