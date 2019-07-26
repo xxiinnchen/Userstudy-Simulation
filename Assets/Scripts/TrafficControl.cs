@@ -25,6 +25,7 @@ public class TrafficControl : MonoBehaviour
     public int numDrones = 10;
     public int EVENT_INTERVAL = 1;
     public int EXIT_TIME = 180;
+    public int MAX_SEED;
 
     // Drone and Event Dictionaries 
     public static Dictionary<int, Drone> dronesDict = new Dictionary<int, Drone>();
@@ -87,26 +88,27 @@ public class TrafficControl : MonoBehaviour
 
     public void initDrones(int num)
     {
-        //Debug.Log("Initializing Drones");
-        int units = 5;
-        int rowcapacity = 5;
-        int parkingInterval = units / rowcapacity;
-        int rowNeeded = num / rowcapacity;
         for (int i = 0; i < num; i++)
         {
-            Drone newDrone = new Drone(i, parkinglot[parkingInterval * i]);
+            Drone newDrone = new Drone(i, parkinglot[i]);
             dronesDict.Add(i, newDrone);
             availableDronesId.Add(i);
         } 
+    }
+
+    public void initEvent(int num)
+    {
+        for (int i = 0; i < num; i++)
+        {
+            Event newEvent = new Event(i, shelves[i]);
+            eventsDict.Add(i, newEvent);
+        }
     }
 
 
     // Use this for initialization
     void Start()
     {
-        
-        Debug.Log("Traffic Control: Start()!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        //seed = 2;
         AVE_TIME = Utility.AVGTIME;
         Debug.Log(SEED);
         rnd = new System.Random(SEED);
@@ -116,13 +118,8 @@ public class TrafficControl : MonoBehaviour
         worldobject = this.gameObject;
         dronesDict = new Dictionary<int, Drone>();
         initDrones(numDrones);
-
-        //Debug.Log("Initializing Events");
-        for (int i = 0; i < shelves.Length; i++)
-        {
-            Event newEvent = new Event(i, shelves[i]);
-            eventsDict.Add(i, newEvent);
-        }
+        initEvent(shelves.Length);
+        
     }
 
     // Update is called once per frame
@@ -130,7 +127,6 @@ public class TrafficControl : MonoBehaviour
     {
         if (timeCounter - lastPrint > 1)
         {
-            //Debug.Log("Update time: " + timeCounter);
             lastPrint = timeCounter;
         }
 
@@ -159,14 +155,29 @@ public class TrafficControl : MonoBehaviour
 
             int e = waitingEventsId.Next();
             int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
+         
 
-            dronesDict[d].AddEvent(eventsDict[e]);
-            // Debug.Log("assign event " + e + " to drone " + d + " with direction: " + dronesDict[d].direction);
+            Drone avalibleDrone = dronesDict[d];
 
+            //if (avalibleDrone.takeoff_timer >= avalibleDrone.takeoff_interval)
+            //{
+            //    avalibleDrone.takeoff_timer = 0;
+            //    avalibleDrone.AddEvent(eventsDict[e]);
+            //    availableDronesId.Remove(d);
+            //    workingDronesId.Add(d);
+            //    waitingEventsId.Remove(e);
+            //    ongoingEventsId.Add(e);
+            //}
+            //else {
+            //    avalibleDrone.takeoff_timer += Time.fixedDeltaTime;
+            //}
+            avalibleDrone.AddEvent(eventsDict[e]);
             availableDronesId.Remove(d);
             workingDronesId.Add(d);
             waitingEventsId.Remove(e);
             ongoingEventsId.Add(e);
+
+
         }
 
         // apply force meanwhile check collision 
@@ -214,6 +225,7 @@ public class TrafficControl : MonoBehaviour
         {
             Drone currDrone = dronesDict[i];
             Drone.DroneStatus status = currDrone.status;
+
             if (status == Drone.DroneStatus.PARKED)
             {
                 continue;
@@ -228,17 +240,22 @@ public class TrafficControl : MonoBehaviour
 
                 //Event curEvent = eventsDict[currDrone.eventId];
 
-                currDrone.status = Drone.DroneStatus.PARKED;
-            }
+                //NEW
+                if (currDrone.repark_timer >= currDrone.repark_interval)
+                {
+                    currDrone.repark_timer = 0;
+                    currDrone.status = Drone.DroneStatus.PARKED;
+                } else
+                {
+                    currDrone.repark_timer += Time.fixedDeltaTime;
+                }
+                //NEW
 
+                //currDrone.status = Drone.DroneStatus.PARKED;
+            }
 
             Drone.MoveStatus moveStatus = currDrone.Move();
 
-            if (i == 1)
-            {
-                //Debug.Log("5. Drone " + dronesDict[i].droneId + " moveStatus " + moveStatus + " status "+ dronesDict[i].status + " Speed " + dronesDict[i].SPEED + " Dirc" + dronesDict[i].direction + " Dist " + Utility.CalDistance(dronesDict[i].curPos, dronesDict[i].eventPos));
-
-            }
 
             if (moveStatus == Drone.MoveStatus.END_TO_SHELF)  // drone status 2 --> 3
             {
@@ -248,7 +265,9 @@ public class TrafficControl : MonoBehaviour
             }
             else if (moveStatus == Drone.MoveStatus.END_WHOLE_TRIP)  // end of whole trip
             {
-                Debug.Log("1. DroneID " + currDrone.droneId + " Two-way trip success");
+                //Debug.Log("1. DroneID " + currDrone.droneId + " Two-way trip success");
+                waitingEventsId.Remove(currDrone.eventId);
+                Debug.Log("Waiting event: " + waitingEventsId);
                 successEventCounter++;
             }
 
@@ -264,12 +283,13 @@ public class TrafficControl : MonoBehaviour
         eventTimer += Time.fixedDeltaTime;
         cleanCounter++;
 
+
 #if IS_USER_STUDY
-        if (SEED <= 5)
+        if (SEED <= MAX_SEED)
         {
             if (timeCounter >= EXIT_TIME)
             {
-                Debug.Log("====================End of a 3 minute user study=============================");
+                //Debug.Log("====================End of a 3 minute user study=============================");
                 //Debug.Log(SEED);
                 ResetSim();
                 
@@ -346,9 +366,11 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
 
-        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test3.txt";
+        string filename = "Assets/Log/10/" + numDrones + "_test1.txt";
+        string filename_success = "Assets/Log/10/" + numDrones + "_Success1.txt";
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
+        StreamWriter fileWriter_success = new StreamWriter(filename_success, true);
 
         fileWriter.WriteLine("CURRENT TIME: " + System.DateTime.Now);
         fileWriter.WriteLine("==========Basic Parameters==========");
@@ -365,6 +387,14 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("System error: " + systemError);
         fileWriter.WriteLine("User error: " + userError);
+        if (userError == 18)
+        {
+            fileWriter_success.WriteLine("==========User Study Data==========");
+            fileWriter_success.WriteLine("Number of drones: " + numDrones);
+            fileWriter_success.WriteLine("Seed: " + SEED);
+            fileWriter_success.WriteLine("System error: " + systemError);
+            fileWriter_success.WriteLine("User error: " + userError);
+        }
         fileWriter.WriteLine("Number success events: " + successEventCounter);
         fileWriter.WriteLine(" ");
 
@@ -377,7 +407,7 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
         
-        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test3.txt"; 
+        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test4.txt"; 
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
 

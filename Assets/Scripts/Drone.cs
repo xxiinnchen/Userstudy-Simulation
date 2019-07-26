@@ -21,6 +21,12 @@ public class Drone {
     public int droneId;
     public int eventId;
 
+    //NEW
+    public static System.Random repark_rnd = new System.Random(1024);
+    public int repark_interval = repark_rnd.Next(0, 5);
+    public float repark_timer = 0;
+    //NEW
+
     public int pauseCounter;
     public enum DroneStatus
     {
@@ -79,18 +85,12 @@ public class Drone {
         END_WHOLE_TRIP = 2,
         OTHER = -1
     }
-    public MoveStatus Move(){
 
-        //direction = Vector3.Normalize(dstPos - parkingPos);
-        curPos = (status == DroneStatus.PARKED) ? curPos : curPos + direction * SPEED;
-    
+
+    public MoveStatus Move(){
         MoveStatus flag = MoveStatus.OTHER;
 
-        if (droneId == 13)
-        {
-            //Debug.Log("6. " + droneId + "Status " + status + " Speed " + SPEED + " Dirc" + direction +" Dist " + Utility.CalDistance(curPos, eventPos));
-
-        }
+        curPos = (status == DroneStatus.PARKED) ? curPos : curPos + direction * SPEED;
 
         // if drone is moving and drone reached the current destination
         if (status != DroneStatus.PARKED && Utility.IsLessThan(curPos - dstPos, epsilon))
@@ -108,6 +108,7 @@ public class Drone {
                 else if (status == DroneStatus.TO_HOVER)  // end of to_hover trip
                 {
                     status = DroneStatus.LAND;
+                    Debug.LogFormat("Event {0} successful by drone {1}", eventId, droneId);
                     dstPos = parkingPos;
                 }
             }
