@@ -267,7 +267,6 @@ public class TrafficControl : MonoBehaviour
             {
                 //Debug.Log("1. DroneID " + currDrone.droneId + " Two-way trip success");
                 waitingEventsId.Remove(currDrone.eventId);
-                Debug.Log("Waiting event: " + waitingEventsId);
                 successEventCounter++;
             }
 
@@ -366,7 +365,7 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
 
-        string filename = "Assets/Log/10/" + numDrones + "_test1.txt";
+        string filename = "Assets/Log/10/" + numDrones + "_Result1.txt";
         string filename_success = "Assets/Log/10/" + numDrones + "_Success1.txt";
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
@@ -386,14 +385,14 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine("==========User Study Data==========");
         fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("System error: " + systemError);
-        fileWriter.WriteLine("User error: " + userError);
-        if (userError == 18)
+        fileWriter.WriteLine("User error: " + userError / 2);
+        if ((userError / 2) == 18)
         {
             fileWriter_success.WriteLine("==========User Study Data==========");
             fileWriter_success.WriteLine("Number of drones: " + numDrones);
             fileWriter_success.WriteLine("Seed: " + SEED);
             fileWriter_success.WriteLine("System error: " + systemError);
-            fileWriter_success.WriteLine("User error: " + userError);
+            fileWriter_success.WriteLine("User error: " + userError / 2);
         }
         fileWriter.WriteLine("Number success events: " + successEventCounter);
         fileWriter.WriteLine(" ");
@@ -425,7 +424,7 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine("==========User Study Data==========");
         fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("System error: " + systemError);
-        fileWriter.WriteLine("User error: " + userError);
+        fileWriter.WriteLine("User error: " + userError / 2);
         fileWriter.WriteLine("Number success events: " + successEventCounter);
         fileWriter.WriteLine(" ");
 
