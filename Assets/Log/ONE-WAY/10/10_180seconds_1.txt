@@ -1,40 +1,4 @@
-﻿CURRENT TIME: 8/5/2019 2:12:56 AM
-==========Basic Parameters==========
-Drone speed: 0.018
-Number of drones: 10
-Event interval: 1
-Number of events: 81
-==========User Study Data==========
-Seed: 1
-System error: 19148
-User error: 7
-Number success events: 42
- 
-CURRENT TIME: 8/5/2019 2:16:00 AM
-==========Basic Parameters==========
-Drone speed: 0.018
-Number of drones: 10
-Event interval: 1
-Number of events: 82
-==========User Study Data==========
-Seed: 2
-System error: 15202
-User error: 6
-Number success events: 46
- 
-CURRENT TIME: 8/5/2019 2:19:07 AM
-==========Basic Parameters==========
-Drone speed: 0.018
-Number of drones: 10
-Event interval: 1
-Number of events: 83
-==========User Study Data==========
-Seed: 3
-System error: 16462
-User error: 6
-Number success events: 40
- 
-CURRENT TIME: 8/5/2019 2:23:18 AM
+﻿CURRENT TIME: 8/5/2019 2:23:18 AM
 ==========Basic Parameters==========
 Drone speed: 0.018
 Number of drones: 10
@@ -70,15 +34,26 @@ System error: 16462
 User error: 13
 Number success events: 40
  
-CURRENT TIME: 8/5/2019 2:32:37 AM
+CURRENT TIME: 8/5/2019 3:43:28 AM
 ==========Basic Parameters==========
 Drone speed: 0.018
 Number of drones: 10
 Event interval: 1
-Number of events: 17
+Number of events: 82
 ==========User Study Data==========
-Seed: 1
-System error: 0
-User error: 0
-Number success events: 15
+Seed: 4
+System error: 19974
+User error: 18
+Number success events: 31
  
+CURRENT TIME: 8/5/2019 4:33:27 AM
+==========Basic Parameters==========
+Drone speed: 0.018
+Number of drones: 10
+Event interval: 1
+Number of events: 80
+==========User Study Data==========
+Seed: 5
+System error: 21294
+User error: 14
+Number success events: 42

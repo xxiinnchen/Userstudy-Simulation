@@ -21,8 +21,8 @@ public class TrafficControl : MonoBehaviour
 
     public GameObject droneBaseObject;
     public GameObject eventBaseObject;
-   
-    public static int numDrones = 10;
+
+    public static int numDrones = 20;
     public float EVENT_INTERVAL = Utility.EVENT_INTERVALS[numDrones];
     public int EXIT_TIME = 180;
     public int MAX_SEED;
@@ -42,7 +42,6 @@ public class TrafficControl : MonoBehaviour
 
 
     // User Data variables
-
     public int systemError = 0;
     public int userError = 0;
     //private int timeCounter = 0;
@@ -106,6 +105,21 @@ public class TrafficControl : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Check if line 1 given by two points intersects with line 2 given by another set of points
+    /// </summary>
+    /// <param name="p1"></param> Point of line 1
+    /// <param name="p2"></param> Another point of line 1
+    /// <param name="p3"></param> Point of line 2
+    /// <param name="p4"></param> Another point of line 2
+    /// <returns></returns>
+    public bool Intersect(Vector3 p1, Vector3 p2, Vector3 p3, Vector4 p4)
+    {
+
+        return true;
+    }
+
+
     // Use this for initialization
     void Start()
     {
@@ -150,7 +164,8 @@ public class TrafficControl : MonoBehaviour
         {
             //Debug.Log("Assigning event to drone");
 
-            int e = waitingEventsId.Next();
+            int e = waitingEventsId.NextRnd();
+            //int e = waitingEventsId.Next();
             int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
          
 
@@ -251,7 +266,7 @@ public class TrafficControl : MonoBehaviour
         {
             if (timeCounter >= EXIT_TIME)
             {
-                //Debug.Log("====================End of a 3 minute user study=============================");
+                Debug.Log("====================End of a 3 minute user study=============================");
                 //Debug.Log(SEED);
                 ResetSim();
                 
@@ -328,8 +343,8 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
 
-        string filename = "Assets/Log/ONE-WAY/10/" + numDrones + "_180seconds_1.txt";
-        string filename_success = "Assets/Log/ONE-WAY/10/" + numDrones + "_180seconds1_Success1.txt";
+        string filename = "Assets/Log/ONE-WAY/20/" + numDrones + "_180secs_2.txt";
+        string filename_success = "Assets/Log/ONE-WAY/20/" + numDrones + "_180secs_Success_2.txt";
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
         StreamWriter fileWriter_success = new StreamWriter(filename_success, true);
@@ -349,7 +364,7 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("System error: " + systemError);
         fileWriter.WriteLine("User error: " + userError);
-        if ((userError) == 18)
+        if (userError == 18)
         {
             fileWriter_success.WriteLine("==========User Study Data==========");
             fileWriter_success.WriteLine("Number of drones: " + numDrones);
