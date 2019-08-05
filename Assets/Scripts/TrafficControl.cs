@@ -51,6 +51,7 @@ public class TrafficControl : MonoBehaviour
     private int cleanCounter = 0;
     private int successEventCounter = 0;
     private int totalEventCounter = 0;
+    private int perMinuteCollisionCounter = 0;
 
     // Functional Variables
     private float AVE_TIME;
@@ -106,17 +107,40 @@ public class TrafficControl : MonoBehaviour
 
 
     /// <summary>
-    /// Check if line 1 given by two points intersects with line 2 given by another set of points
+    /// Check if the distance between line 1 given by two points and line 2 given by another set of points is less than some bound
     /// </summary>
     /// <param name="p1"></param> Point of line 1
     /// <param name="p2"></param> Another point of line 1
     /// <param name="p3"></param> Point of line 2
     /// <param name="p4"></param> Another point of line 2
     /// <returns></returns>
-    public bool Intersect(Vector3 p1, Vector3 p2, Vector3 p3, Vector4 p4)
+    public bool IsWithinCollisionBound(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, double bound)
     {
+        Vector3 v1, v2, w;
+        v1 = p2 - p1;
+        v2 = p4 - p3;
+        w = p4 - p1;
 
-        return true;
+        Vector4 v1p, v2p, wp, identity;
+        v1p = new Vector4(v1.x, v1.y, v1.z, 0);
+        v2p = new Vector4(v2.x, v2.y, v2.z, 0);
+        wp = new Vector4(w.x, w.y, w.z, 0);
+        identity = new Vector4(0, 0, 0, 1);
+
+        Matrix4x4 matrix_denominator = new Matrix4x4(v1p, v2p, wp, identity);
+        double det = matrix_denominator.determinant;
+
+        double nominator = Vector3.Cross(v1, v2).magnitude;
+
+        double dist = det / nominator;
+
+        if (dist < bound)
+        {
+            return true;
+        } else
+        {
+            return false;
+        }    
     }
 
 
@@ -163,7 +187,10 @@ public class TrafficControl : MonoBehaviour
         if (availableDronesId.Count > 0 && waitingEventsId.Count > 0)
         {
             //Debug.Log("Assigning event to drone");
+            //if (perMinuteCollisionCounter <= 6)
+            //{
 
+            //}
             int e = waitingEventsId.NextRnd();
             //int e = waitingEventsId.Next();
             int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
