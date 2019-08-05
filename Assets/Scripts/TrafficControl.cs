@@ -143,6 +143,7 @@ public class TrafficControl : MonoBehaviour
 
                 int newIdx = GenRandEvent();
                 //Event newWaitingEvent = eventsDict[newIdx];
+                Debug.Log("Adding to event" + newIdx);
                 waitingEventsId.Add(newIdx);
 
                 totalEventCounter++;
@@ -262,10 +263,12 @@ public class TrafficControl : MonoBehaviour
                 //Debug.Log("0. DroneID " + dronesDict[i].droneId + " One -way trip success");
                 //Event curEvent = eventsDict[dronesDict[i].eventId];
                 ongoingEventsId.Remove(currDrone.eventId);
+                waitingEventsId.Remove(currDrone.eventId);
             }
             else if (moveStatus == Drone.MoveStatus.END_WHOLE_TRIP)  // end of whole trip
             {
                 //Debug.Log("1. DroneID " + currDrone.droneId + " Two-way trip success");
+                ongoingEventsId.Remove(currDrone.eventId);
                 waitingEventsId.Remove(currDrone.eventId);
                 successEventCounter++;
             }
@@ -365,8 +368,8 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
 
-        string filename = "Assets/Log/10/" + numDrones + "_Result1.txt";
-        string filename_success = "Assets/Log/10/" + numDrones + "_Success1.txt";
+        string filename = "Assets/Log/10/" + numDrones + "_180seconds_1.txt";
+        string filename_success = "Assets/Log/10/" + numDrones + "_180seconds1_Success1.txt";
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
         StreamWriter fileWriter_success = new StreamWriter(filename_success, true);

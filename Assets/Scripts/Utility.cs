@@ -24,11 +24,15 @@ public class Utility : MonoBehaviour
 
     private static Vector3 ShelfBasePos = new Vector3(26.57f, 20.41f, 1.93f); // left-bottom corner of the shelf
     private static Vector3 ParkingBasePos = new Vector3(26.51615f, 17.572f, 20.04752f);
-    private static float horizonInterval = -2.26f;
-    private static float verticalInterval = 1.7f;
-    private static float parkingInterval = 2.4f;
+    //private static float horizonInterval = -2.26f;
+    //private static float verticalInterval = 1.7f;
+    //private static float parkingInterval = 2.4f;
 
-    public static Vector3[] shelves = InitShelves(ShelfBasePos, horizonInterval, verticalInterval, 2, 5);
+    private static float horizonInterval = -5f;
+    private static float verticalInterval = 5f;
+    private static float parkingInterval = 5f;
+
+    public static Vector3[] shelves = InitShelves(ShelfBasePos, horizonInterval, verticalInterval, 1, 10);
     public static Vector3[] parking = InitParkingLot(ParkingBasePos, parkingInterval, parkingInterval, 1, 10);
 
 

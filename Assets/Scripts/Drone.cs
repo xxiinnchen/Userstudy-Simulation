@@ -108,7 +108,7 @@ public class Drone {
                 else if (status == DroneStatus.TO_HOVER)  // end of to_hover trip
                 {
                     status = DroneStatus.LAND;
-                    Debug.LogFormat("Event {0} successful by drone {1}", eventId, droneId);
+                    
                     dstPos = parkingPos;
                 }
             }
@@ -127,6 +127,7 @@ public class Drone {
                 // end of whole trip
                 status = DroneStatus.PARKED;
                 curPos = parkingPos;
+                Debug.LogFormat("Event {0} successful by drone {1}", eventId, droneId);
                 flag = MoveStatus.END_WHOLE_TRIP;
             }
         }
