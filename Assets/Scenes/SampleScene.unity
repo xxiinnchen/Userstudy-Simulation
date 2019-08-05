@@ -215,9 +215,8 @@ MonoBehaviour:
     type: 3}
   eventBaseObject: {fileID: 3176900642811212333, guid: be94373cd6e80a5439b77e2535091660,
     type: 3}
-  numDrones: 10
   EVENT_INTERVAL: 1
-  EXIT_TIME: 180
+  EXIT_TIME: 18
   MAX_SEED: 100
   systemError: 0
   userError: 0

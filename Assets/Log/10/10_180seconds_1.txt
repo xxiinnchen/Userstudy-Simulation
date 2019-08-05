@@ -89,3 +89,18 @@ System error: 12676
 User error: 24
 Number success events: 5
  
+CURRENT TIME: 8/5/2019 1:52:44 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 50
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 81
+==========User Study Data==========
+Seed: 1
+System error: 19148
+User error: 7
+Number success events: 42
+ 

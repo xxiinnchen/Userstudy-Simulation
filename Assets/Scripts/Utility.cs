@@ -11,7 +11,8 @@ public class Utility : MonoBehaviour
     public static bool IS_RND_TAKEOFF = true; //Used to choose random drone or next in interable upon assigning an event in TafficControl: Update()
 
     // game logic constant
-    public const int EXIT_TIME = 6000;  // the total time that the game is running
+    public const int EXIT_TIME = 180;  // the total time that the game is running
+    public static Dictionary<int, float> EVENT_INTERVALS = new Dictionary<int, float>() { { 10, 1 }, { 20, 0.5f }, { 30,  1/3f} };
 
     // drone logic constant
     public static readonly float BOUND_DIM = 1.4f, INTERACT_DIM = 2.3f, REPLAN_DIM = 2.2f;
@@ -24,13 +25,9 @@ public class Utility : MonoBehaviour
 
     private static Vector3 ShelfBasePos = new Vector3(26.57f, 20.41f, 1.93f); // left-bottom corner of the shelf
     private static Vector3 ParkingBasePos = new Vector3(26.51615f, 17.572f, 20.04752f);
-    //private static float horizonInterval = -2.26f;
-    //private static float verticalInterval = 1.7f;
-    //private static float parkingInterval = 2.4f;
-
-    private static float horizonInterval = -5f;
-    private static float verticalInterval = 5f;
-    private static float parkingInterval = 5f;
+    private static float horizonInterval = -2.26f;
+    private static float verticalInterval = 1.7f;
+    private static float parkingInterval = 2.4f;
 
     public static Vector3[] shelves = InitShelves(ShelfBasePos, horizonInterval, verticalInterval, 1, 10);
     public static Vector3[] parking = InitParkingLot(ParkingBasePos, parkingInterval, parkingInterval, 1, 10);
@@ -97,7 +94,6 @@ public class Utility : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log("Utility: Awake()");
         DELTATIME = Time.fixedDeltaTime;
         DRONE_SPEED = (INTERACT_DIM - BOUND_DIM) / INTERACT_TIME * DELTATIME;
      

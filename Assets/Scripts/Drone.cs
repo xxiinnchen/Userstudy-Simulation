@@ -21,11 +21,11 @@ public class Drone {
     public int droneId;
     public int eventId;
 
-    //NEW
-    public static System.Random repark_rnd = new System.Random(1024);
-    public int repark_interval = repark_rnd.Next(0, 5);
-    public float repark_timer = 0;
-    //NEW
+    ////NEW
+    //public static System.Random repark_rnd = new System.Random(1024);
+    //public int repark_interval = repark_rnd.Next(0, 5);
+    //public float repark_timer = 0;
+    ////NEW
 
     public int pauseCounter;
     public enum DroneStatus
@@ -33,11 +33,9 @@ public class Drone {
         PARKED = 0,
         TAKEOFF = 1,
         TO_SHELF = 2,
-        TO_HOVER = 3,
-        LAND = 4,
-        COLLIDE = 5
+        //COLLIDE = 3
     }
-    public DroneStatus status; // 0: parked, 1: takeoff, 2: to shelf, 3: to hover, 4: land, 5: collide
+    public DroneStatus status; // 0: parked, 1: takeoff, 2: to shelf, 3: collide
     public bool isCollided;
 
     public Drone(int droneId, Vector3 initPos)
@@ -46,7 +44,8 @@ public class Drone {
         this.droneId = droneId;
         this.parkingPos = this.curPos = initPos;
         this.hoverPos = this.parkingPos + hoverShift;
-        this.status = 0;
+        this.status = DroneStatus.PARKED;
+        this.isCollided = false;
 
         // create game object
         GameObject baseObject = TrafficControl.worldobject.GetComponent<TrafficControl>().droneBaseObject;
@@ -82,7 +81,6 @@ public class Drone {
     {
         PAUSED = 0,
         END_TO_SHELF = 1,
-        END_WHOLE_TRIP = 2,
         OTHER = -1
     }
 
@@ -92,43 +90,25 @@ public class Drone {
 
         curPos = (status == DroneStatus.PARKED) ? curPos : curPos + direction * SPEED;
 
-        // if drone is moving and drone reached the current destination
+        // if drone is moving(drone not parked)
+        // and drone reached the current destination
         if (status != DroneStatus.PARKED && Utility.IsLessThan(curPos - dstPos, epsilon))
         {
-            //Debug.Log(status + " " + curPos + " " + dstPos + " " + hoverPos + " " + parkingPos + " " + eventPos);
-
-            if (Utility.IsLessThan(dstPos - hoverPos, epsilon))
+            if (Utility.IsLessThan(dstPos - hoverPos, epsilon)) // drone has finished takeoff
             {
                 if (status == DroneStatus.TAKEOFF)  // end of takeoff
                 {
-                    //Debug.Log("Towards Event Drone: " + droneId);
                     status = DroneStatus.TO_SHELF;
                     dstPos = eventPos;
                 }
-                else if (status == DroneStatus.TO_HOVER)  // end of to_hover trip
-                {
-                    status = DroneStatus.LAND;
-                    
-                    dstPos = parkingPos;
-                }
             }
 
-            else if (Utility.IsLessThan(dstPos - eventPos, epsilon))
+            else if (Utility.IsLessThan(dstPos - eventPos, epsilon)) // Drone reached the event
+            //else
             {
-                // cur_s = 2 --> 3
-                // end of to_shelf trip
-                //Debug.Log("3. DroneID " + droneId + " Reached Event");
-                status = DroneStatus.TO_HOVER;
-                dstPos = hoverPos;
-                flag = MoveStatus.END_TO_SHELF;
-            }
-            else
-            {
-                // end of whole trip
                 status = DroneStatus.PARKED;
                 curPos = parkingPos;
-                Debug.LogFormat("Event {0} successful by drone {1}", eventId, droneId);
-                flag = MoveStatus.END_WHOLE_TRIP;
+                flag = MoveStatus.END_TO_SHELF;
             }
         }
         gameObjectPointer.transform.position = curPos;
