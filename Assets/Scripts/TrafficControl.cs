@@ -50,10 +50,9 @@ public class TrafficControl : MonoBehaviour
     private int cleanCounter = 0;
     private int successEventCounter = 0;
     private int totalEventCounter = 0;
-    private int perMinuteCollisionCounter = 0;
     private double sixtysecsCounter = 0; // counts the number of seconds already elapsed in that minute
     private int minuteCounter = 1; // which minute currently in 1, 2 or 3
-    private int currMinuteCrashCounter = 0; // the number of crashes for the current minute
+    public int currMinuteCrashCounter = 0; // the number of crashes for the current minute
 
     // Functional Variables
     private float AVE_TIME;
@@ -191,18 +190,20 @@ public class TrafficControl : MonoBehaviour
             sixtysecsCounter += Time.fixedDeltaTime;
         } else
         {
-            perMinuteCollisionCounter = 0;
+            currMinuteCrashCounter = 0;
             sixtysecsCounter = 0;
         }
 
         if (availableDronesId.Count > 0 && waitingEventsId.Count > 0)
         {
-            if (perMinuteCollisionCounter >= 6)
+            if (currMinuteCrashCounter >= 6)
             {
+                Debug.Log("???????????????????????");
                 PairPermutation formPermute = new PairPermutation();
                 int[] droneIDArray = availableDronesId.getList().ToArray();
                 int[] eventIDArray = waitingEventsId.getList().ToArray();
                 List<int[]> dronePermutations = PairPermutation.GetPermutation(droneIDArray);
+                
                 int counter = 0;
                 bool hasSolution = false;
                 foreach (int[] permute in dronePermutations)
@@ -213,6 +214,7 @@ public class TrafficControl : MonoBehaviour
                     bool collision = false;
                     for (int i = 0; i < numOptions - 1; i++)
                     {
+                        Debug.Log("______________________");
                         for  (int j = 0; j< numOptions - 1; j++)
                         {
                             Vector3 p1, p2, p3, p4;
@@ -221,6 +223,7 @@ public class TrafficControl : MonoBehaviour
                             p3 = eventsDict[eventIDArray[j]].pos;
                             p4 = dronesDict[droneIDArray[j]].hoverPos;
                             collision = IsWithinCollisionBound(p1, p2, p3, p4);
+                            Debug.LogFormat("Drone {0} Event {1} | Drone {2} Event{3} could crash!!!!!!!", droneIDArray[i], eventIDArray[i], droneIDArray[j], eventIDArray[j]);
                             if (collision)
                             {
                                 break;
@@ -306,6 +309,7 @@ public class TrafficControl : MonoBehaviour
                         if (!dronesDict[i].isCollided && !dronesDict[j].isCollided)
                         {
                             userError++;
+                            currMinuteCrashCounter++;
                             Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  =====", i, j);
                         }
                         

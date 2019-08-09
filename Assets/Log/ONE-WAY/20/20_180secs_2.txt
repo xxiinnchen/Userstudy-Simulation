@@ -1,0 +1,12 @@
+CURRENT TIME: 8/9/2019 5:05:06 AM
+==========Basic Parameters==========
+Drone speed: 0.018
+Number of drones: 20
+Event interval: 0.5
+Number of events: 156
+==========User Study Data==========
+Seed: 1
+System error: 58194
+User error: 30
+Number success events: 55
+ 
