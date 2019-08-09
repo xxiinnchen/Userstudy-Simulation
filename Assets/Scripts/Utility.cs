@@ -81,6 +81,16 @@ public class Utility : MonoBehaviour
         return Mathf.Sqrt(Mathf.Pow(a[0] - b[0], 2.0f) + Mathf.Pow(a[1] - b[1], 2.0f) + Mathf.Pow(a[2] - b[2], 2.0f));
     }
 
+    public static int Factorial(int n)
+    {
+        int number = n;
+        for (int i = number - 1; i >=1; i--)
+        {
+            number = number * i;
+        }
+        return number;
+    }
+
     public static void DeleteChild(GameObject go, string name)
     {
         foreach (Transform child in go.transform)
@@ -97,5 +107,7 @@ public class Utility : MonoBehaviour
         DELTATIME = Time.fixedDeltaTime;
         DRONE_SPEED = (INTERACT_DIM - BOUND_DIM) / INTERACT_TIME * DELTATIME;
         //DRONE_SPEED *= 5;
+        PairPermutation formPermute = new PairPermutation();
+        List<int[]> permutations = PairPermutation.getPermutation(new int[] { 1, 6, 5, 9 });
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class OrderedSet<T>
 {
     private readonly HashSet<T> m_HashSet;
-    private readonly IList<T> m_List;
+    private readonly List<T> m_List;
 
     public System.Random rnd = new System.Random(TrafficControl.SEED);
     //private static System.Random rnd = new System.Random(42);
@@ -58,5 +58,10 @@ public class OrderedSet<T>
         if (m_HashSet.Count == 0) return default(T);
 
         return m_List[rnd.Next(m_List.Count)];
+    }
+
+    public List<T> getList()
+    {
+        return m_List;
     }
 }
