@@ -33,7 +33,7 @@ public class PairPermutation
         }
     }
 
-    public static List<int[]> getPermutation(int[] list)
+    public static List<int[]> GetPermutation(int[] list)
     {
         List<int[]> permutations = new List<int[]>(); 
         foreach (int[] permutation in PairPermutation.AllFor(list))
@@ -50,6 +50,6 @@ public class PairPermutation
     //public static void main()
     //{
     //    PairPermutation formPermute = new PairPermutation();
-    //    List<int[]> permutations = PairPermutation.getPermutation(new int[] { 1, 6, 5, 9 });
+    //    List<int[]> permutations = PairPermutation.GetPermutation(new int[] { 1, 6, 5, 9 });
     //}
 }

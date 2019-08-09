@@ -146,87 +146,6 @@ public class TrafficControl : MonoBehaviour
     }
 
 
-    //Dictionary<int, int> FindNoCrashPair()
-    //{
-    //    Dictionary<int, int> pairings= new Dictionary<int, int>();
-    //    for (int i = 0; i < availableDronesId.Count; i++)
-    //    {
-    //        for (int j = 0; j < waitingEventsId.Count; j++)
-    //        {
-    //            int dronePos = availableDronesId.Next().hoverPos;
-    //            int eventPos = waitingEventsId.Next().pos;
-
-    //        }
-    //    }
-    //    return pairing;
-    //}
-
-
-    //void FindNoCrashPairs(OrderedSet<int> eventsID, OrderedSet<int> dronesID)
-    //{
-    //    IList<int> waitingEventsIDList = waitingEventsId.getIList();
-    //    IList<int> avalibleDronesIDList = availableDronesId.getIList();
-    //    int nextEventID = waitingEventsIDList[0];
-    //    Event nextEvent = eventsDict[nextEventID];
-
-    //    // fix event index 0 with drone index k
-    //    for (int k = 0; k < avalibleDronesIDList.Count; k++)
-    //    {
-    //        int nextDroneID = avalibleDronesIDList[k];
-    //        avalibleDronesIDList.Remove(k);
-    //        Drone nextDrone = dronesDict[nextDroneID];
-
-    //        // find event drone pairings without any crashes
-    //        for (int i = 1; i < waitingEventsIDList.Count; i++)
-    //        {
-    //            for (int j = 0; j < avalibleDronesIDList.Count; j++)
-    //            {
-    //                Event anotherEvent = eventsDict[waitingEventsIDList[i]];
-    //                Drone anotherDrone = dronesDict[avalibleDronesIDList[j]];
-    //                Vector3 p1 = nextDrone.hoverPos;
-    //                Vector3 p2 = nextEvent.pos;
-    //                Vector3 p3 = anotherDrone.hoverPos;
-    //                Vector3 p4 = anotherEvent.pos;
-
-    //                if (IsWithinCollisionBound(p1, p2, p3, p4))
-    //                {
-    //                    avalibleDronesIDList.Insert(k, nextDroneID);
-    //                    continue;
-    //                } else
-    //                {
-
-    //                }
-
-    //            }
-    //        }
-    //    }
-
-    //    OrderedSet<int> orderedSet = new OrderedSet<int>();
-    //    return [orderedSet];
-    //}
-
-    //List<Dictionary<int, int>> findAllPairings(List<int> eventsID, List<int> DronesID)
-    //{
-    //    List<Dictionary<int, int>> pairings = new List<Dictionary<int, int>>();
-        
-    //    if (eventsID.Count == 1)
-    //    {
-    //        pairings[eventsID[0]] = DronesID[0];
-    //    } else if (eventsID.Count == 2)
-    //    {
-    //        pairings
-    //    }
-        
-
-
-
-
-    //    return pairings;
-    //}
-
-
-
-
     // Use this for initialization
     void Start()
     {
@@ -280,40 +199,71 @@ public class TrafficControl : MonoBehaviour
         {
             if (perMinuteCollisionCounter >= 6)
             {
-                OrderedSet<int> possibleAvailableDronesId = new OrderedSet<int>();
-                OrderedSet<int> possibleAvailableEventsId = new OrderedSet<int>();
-
-                //FindNoCrashPairs(possibleAvailableEventsId, possibleAvailableDronesId);
-
-                //if (avalibleParingDict.Count != 0)
-                //{
-                //    foreach (KeyValuePair<int, int> match in avalibleParingDict)
-                //    {
-                //        int droneID = match.Key;
-                //        int eventID = match.Value;
-                //        dronesDict[droneID].AddEvent(eventsDict[eventID]);
-                //        availableDronesId.Remove(droneID);
-                //        workingDronesId.Add(droneID);
-                //        waitingEventsId.Remove(eventID);
-                //        ongoingEventsId.Add(eventID);
-                //    }
-                //}
-                //else
-                //{
-                //    int e = waitingEventsId.Next();
-                //    //    //int e = waitingEventsId.Next();
-                //    int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
-
-
-                //    Drone avalibleDrone = dronesDict[d];
-
-                //    avalibleDrone.AddEvent(eventsDict[e]);
-                //    availableDronesId.Remove(d);
-                //    workingDronesId.Add(d);
-                //    waitingEventsId.Remove(e);
-                //    ongoingEventsId.Add(e);
-                //}
-            }  
+                PairPermutation formPermute = new PairPermutation();
+                int[] droneIDArray = availableDronesId.getList().ToArray();
+                int[] eventIDArray = waitingEventsId.getList().ToArray();
+                List<int[]> dronePermutations = PairPermutation.GetPermutation(droneIDArray);
+                int counter = 0;
+                bool hasSolution = false;
+                foreach (int[] permute in dronePermutations)
+                {
+                    int numOptions = permute.Length;
+                    int size = numOptions * numOptions;
+                    List<bool> pairIntersection = new List<bool>();
+                    bool collision = false;
+                    for (int i = 0; i < numOptions - 1; i++)
+                    {
+                        for  (int j = 0; j< numOptions - 1; j++)
+                        {
+                            Vector3 p1, p2, p3, p4;
+                            p1 = eventsDict[eventIDArray[i]].pos;
+                            p2 = dronesDict[droneIDArray[i]].hoverPos;
+                            p3 = eventsDict[eventIDArray[j]].pos;
+                            p4 = dronesDict[droneIDArray[j]].hoverPos;
+                            collision = IsWithinCollisionBound(p1, p2, p3, p4);
+                            if (collision)
+                            {
+                                break;
+                            }
+                        }
+                        if (collision)
+                        {
+                            break;
+                        }
+                    }
+                    if (!collision)
+                    {
+                        hasSolution = true;
+                        break;
+                    } else
+                    {
+                        collision = false;
+                        counter++;
+                    }
+                }
+                if (hasSolution) {
+                    int[] solution = dronePermutations[counter];
+                    Utility.IS_RND_TAKEOFF = false;
+                    OrderedSet<int> newAvailableDronesID = new OrderedSet<int>();
+                    foreach (int item in solution)
+                    {
+                        newAvailableDronesID.Add(item);
+                    }
+                    availableDronesId = newAvailableDronesID;
+                }
+            } else
+            {
+                Utility.IS_RND_TAKEOFF = true;  
+            }
+            int e = waitingEventsId.Next();
+            int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
+            Drone nextDrone = dronesDict[d];
+            Event nextEvent = eventsDict[e];
+            nextDrone.AddEvent(nextEvent);
+            availableDronesId.Remove(d);
+            workingDronesId.Add(d);
+            waitingEventsId.Remove(e);
+            ongoingEventsId.Add(e);
         }
         //if (availableDronesId.Count > 0 && waitingEventsId.Count > 0)
         //{

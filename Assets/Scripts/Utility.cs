@@ -107,7 +107,6 @@ public class Utility : MonoBehaviour
         DELTATIME = Time.fixedDeltaTime;
         DRONE_SPEED = (INTERACT_DIM - BOUND_DIM) / INTERACT_TIME * DELTATIME;
         //DRONE_SPEED *= 5;
-        PairPermutation formPermute = new PairPermutation();
-        List<int[]> permutations = PairPermutation.getPermutation(new int[] { 1, 6, 5, 9 });
+
     }
 }
