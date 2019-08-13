@@ -186,11 +186,6 @@ public class TrafficControl : MonoBehaviour
 
         if (availableDronesId.Count > 0 && waitingEventsId.Count > 0)
         {
-            //Debug.Log("Assigning event to drone");
-            //if (perMinuteCollisionCounter <= 6)
-            //{
-
-            //}
             int e = waitingEventsId.NextRnd();
             //int e = waitingEventsId.Next();
             int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
