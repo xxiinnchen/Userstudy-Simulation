@@ -202,6 +202,7 @@ public class TrafficControl : MonoBehaviour
                 PairPermutation formPermute = new PairPermutation();
                 int[] droneIDArray = availableDronesId.getList().ToArray();
                 int[] eventIDArray = waitingEventsId.getList().ToArray();
+                Debug.Log(string.Join(" ", droneIDArray));
                 List<int[]> dronePermutations = PairPermutation.GetPermutation(droneIDArray);
                 
                 int counter = 0;
@@ -214,7 +215,6 @@ public class TrafficControl : MonoBehaviour
                     bool collision = false;
                     for (int i = 0; i < numOptions - 1; i++)
                     {
-                        Debug.Log("______________________");
                         for  (int j = 0; j< numOptions - 1; j++)
                         {
                             Vector3 p1, p2, p3, p4;

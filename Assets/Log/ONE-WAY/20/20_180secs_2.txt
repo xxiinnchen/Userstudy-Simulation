@@ -10,3 +10,15 @@ System error: 58194
 User error: 30
 Number success events: 55
  
+CURRENT TIME: 8/9/2019 2:58:51 PM
+==========Basic Parameters==========
+Drone speed: 0.018
+Number of drones: 20
+Event interval: 0.5
+Number of events: 158
+==========User Study Data==========
+Seed: 2
+System error: 69468
+User error: 34
+Number success events: 37
+ 

@@ -703,3 +703,33 @@ System error: 21018
 User error: 4
 Number success events: 11
  
+CURRENT TIME: 8/9/2019 5:23:05 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 17.12856
+Drone speed: 0.018
+Number of drones: 20
+Average time: 0
+Event interval: 0.5
+Number of events: 50
+==========User Study Data==========
+Seed: 2
+System error: 13468
+User error: 3
+Number success events: 10
+ 
+CURRENT TIME: 8/9/2019 2:58:54 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 25.42526
+Drone speed: 0.018
+Number of drones: 20
+Average time: 0
+Event interval: 0.5
+Number of events: 4
+==========User Study Data==========
+Seed: 3
+System error: 0
+User error: 0
+Number success events: 0
+ 
