@@ -365,8 +365,8 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
 
-        string filename = "Assets/Log/ONE-WAY/20/" + numDrones + "_180secs_2.txt";
-        string filename_success = "Assets/Log/ONE-WAY/20/" + numDrones + "_180secs_Success_2.txt";
+        string filename = "Assets/Log/ONE-WAY/" + numDrones + "/" + Utility.numEventRows + ".txt";
+        string filename_success = "Assets/Log/ONE-WAY/" + numDrones + "/" + Utility.numEventRows + "_success.txt";
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
         StreamWriter fileWriter_success = new StreamWriter(filename_success, true);
