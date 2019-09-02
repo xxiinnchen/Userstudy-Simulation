@@ -154,3 +154,15 @@ System error: 17016
 User error: 11
 Number success events: 41
  
+CURRENT TIME: 8/13/2019 2:16:09 PM
+==========Basic Parameters==========
+Drone speed: 0.018
+Number of drones: 10
+Event interval: 1
+Number of events: 104
+==========User Study Data==========
+Seed: 14
+System error: 20666
+User error: 7
+Number success events: 50
+ 
