@@ -16,11 +16,16 @@ public class TrafficControl : MonoBehaviour
     static string seed_string = reader.ReadLine();
     public static int SEED = strToInt(seed_string);
 
+    public static string csv_filename = "";
+    public static StreamReader csv_reader = new StreamReader(csv_filename);
+    public static List<List<float>> crash_record = ReadCSV();
+
     public static GameObject worldobject;
     
 
     public GameObject droneBaseObject;
     public GameObject eventBaseObject;
+
 
     public static int numDrones = 20;
     public float EVENT_INTERVAL = Utility.EVENT_INTERVALS[numDrones];
@@ -44,18 +49,56 @@ public class TrafficControl : MonoBehaviour
     // User Data variables
     public int systemError = 0;
     public int userError = 0;
-    //private int timeCounter = 0;
     private float timeCounter = 0;
     private float eventTimer = 0;
     private float lastPrint = 0;
-    private int cleanCounter = 0;
     private int successEventCounter = 0;
     private int totalEventCounter = 0;
-    private int perMinuteCollisionCounter = 0;
+    private int flyingDroneCount = 0;
+
+    private float minuteCounter = 0; // time elapsed in that minute
+    private int currMinCollisionCounter = 0; // number of collisions in the current minute
+    
 
     // Functional Variables
     private float AVE_TIME;
     private System.Random rnd;
+
+    public static List<List<float>> ReadCSV()
+    {
+        List<List<float>> result = new List<List<float>>();
+        while (!csv_reader.EndOfStream)
+        {
+            string line = csv_reader.ReadLine();
+            string[] values = line.Split(',');
+            List<float> values_float = new List<float>();
+            foreach (string value in values)
+            {
+                values_float.Add(strToFloat(value));
+            }
+            result.Add(values_float);
+        }
+        return result;
+    }
+
+
+    public static float strToFloat(string str)
+    {
+        float numVal = -1;
+        try
+        {
+            numVal = float.Parse(str);
+        }
+        catch (FormatException e)
+        {
+            Debug.Log("Invalid Seed file." + e);
+        }
+        Debug.Log("Retreiving Seed from SEED.txt: " + numVal);
+        reader.Close();
+
+        return numVal;
+    }
+
 
     public static int strToInt(string str)
     {
@@ -162,6 +205,12 @@ public class TrafficControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (minuteCounter >= 60)
+        {
+            minuteCounter = 0;
+            currMinCollisionCounter = 0;
+        }
+
         if (timeCounter - lastPrint > 1)
         {
             lastPrint = timeCounter;
@@ -180,24 +229,22 @@ public class TrafficControl : MonoBehaviour
 
                 int newIdx = GenRandEvent();
                 waitingEventsId.Add(newIdx);
-                totalEventCounter++;
             }
         }
 
         if (availableDronesId.Count > 0 && waitingEventsId.Count > 0)
         {
-            int e = waitingEventsId.NextRnd();
-            //int e = waitingEventsId.Next();
+            int e = waitingEventsId.Next();
             int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
          
+            Drone availableDrone = dronesDict[d];
 
-            Drone avalibleDrone = dronesDict[d];
-
-            avalibleDrone.AddEvent(eventsDict[e]);
+            availableDrone.AddEvent(eventsDict[e]);
             availableDronesId.Remove(d);
             workingDronesId.Add(d);
             waitingEventsId.Remove(e);
             ongoingEventsId.Add(e);
+            totalEventCounter++;
         }
 
         // apply force meanwhile check collision 
@@ -214,10 +261,8 @@ public class TrafficControl : MonoBehaviour
                 Vector3 delta = dronesDict[i].gameObjectPointer.transform.Find("pCube2").gameObject.transform.position - dronesDict[j].gameObjectPointer.transform.Find("pCube2").gameObject.transform.position;
                 float dis = delta.magnitude;
 
-                //if (Utility.IsLessThan(delta, Utility.CUTOFF_INTERACT))
                 if (dis < Utility.INTERACT_DIM)
                 {
-                    //if (Utility.IsLessThan(delta, Utility.COLLISION_BOUND))
                     if (dis < Utility.BOUND_DIM)
                     {
                         //Debug.Log("2. DroneID " + dronesDict[i].droneId + " Drone Collision");
@@ -247,6 +292,8 @@ public class TrafficControl : MonoBehaviour
         {
             Drone currDrone = dronesDict[i];
             Drone.DroneStatus status = currDrone.status;
+
+
 
             if (status == Drone.DroneStatus.PARKED)
             {
@@ -279,8 +326,8 @@ public class TrafficControl : MonoBehaviour
         }
         // update counter
         timeCounter += Time.fixedDeltaTime;
+        minuteCounter += Time.fixedDeltaTime;
         eventTimer += Time.fixedDeltaTime;
-        cleanCounter++;
 
 
 #if IS_USER_STUDY
@@ -348,7 +395,6 @@ public class TrafficControl : MonoBehaviour
         userError = 0;
         timeCounter = 0;
         eventTimer = 0;
-        cleanCounter = 0;
         successEventCounter = 0;
         totalEventCounter = 0;
 
@@ -365,8 +411,8 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
 
-        string filename = "Assets/Log/ONE-WAY/" + numDrones + "/" + Utility.numEventRows + ".txt";
-        string filename_success = "Assets/Log/ONE-WAY/" + numDrones + "/" + Utility.numEventRows + "_success.txt";
+        string filename = "Assets/Log/ONE-WAY/" + numDrones + "/" + "4rows" + ".txt";
+        string filename_success = "Assets/Log/ONE-WAY/" + numDrones + "/" + "4rows" + "_success.txt";
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
         StreamWriter fileWriter_success = new StreamWriter(filename_success, true);
@@ -398,6 +444,7 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine(" ");
 
         fileWriter.Close();
+        fileWriter_success.Close();
     }
 
 

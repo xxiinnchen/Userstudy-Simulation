@@ -33,6 +33,7 @@ public class Drone {
         PARKED = 0,
         TAKEOFF = 1,
         TO_SHELF = 2,
+        DELAY = 3,
         //COLLIDE = 3
     }
     public DroneStatus status; // 0: parked, 1: takeoff, 2: to shelf, 3: collide
