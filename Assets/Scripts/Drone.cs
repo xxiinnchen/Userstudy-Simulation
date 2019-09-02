@@ -20,6 +20,7 @@ public class Drone {
     public float SPEED;
     public int droneId;
     public int eventId;
+    public int eventNo;
 
     ////NEW
     //public static System.Random repark_rnd = new System.Random(1024);

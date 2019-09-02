@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+using System.Text;
 
 using UnityEngine.SceneManagement;
 
@@ -25,7 +26,6 @@ public class TrafficControl : MonoBehaviour
 
     public GameObject droneBaseObject;
     public GameObject eventBaseObject;
-
 
     public static int numDrones = 20;
     public float EVENT_INTERVAL = Utility.EVENT_INTERVALS[numDrones];
@@ -99,6 +99,7 @@ public class TrafficControl : MonoBehaviour
         return numVal;
     }
 
+    private List<string[]> rowData = new List<string[]>();
 
     public static int strToInt(string str)
     {
@@ -199,7 +200,19 @@ public class TrafficControl : MonoBehaviour
         dronesDict = new Dictionary<int, Drone>();
         initDrones(numDrones);
         initEvent(shelves.Length);
-        
+
+        //csv file header:
+        string[] csvHeaderRow = new string[7];
+        csvHeaderRow[0] = "Event No A";
+        csvHeaderRow[1] = "Drone A"  ;
+        csvHeaderRow[2] = "Event A"  ;
+        csvHeaderRow[3] = "Event No B";
+        csvHeaderRow[4] = "Drone B"  ;
+        csvHeaderRow[5] = "Event B"  ;
+        csvHeaderRow[6] = "Time"     ;
+
+        rowData.Add(csvHeaderRow);
+
     }
 
     // Update is called once per frame
@@ -240,6 +253,7 @@ public class TrafficControl : MonoBehaviour
             Drone availableDrone = dronesDict[d];
 
             availableDrone.AddEvent(eventsDict[e]);
+            availableDrone.eventNo = totalEventCounter;
             availableDronesId.Remove(d);
             workingDronesId.Add(d);
             waitingEventsId.Remove(e);
@@ -270,8 +284,17 @@ public class TrafficControl : MonoBehaviour
                         {
                             userError++;
                             Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  =====", i, j);
+                            string [] rowDataTemp = new String[7];
+                            rowDataTemp[0] = dronesDict[i].eventNo.ToString();
+                            rowDataTemp[1] = dronesDict[i].droneId.ToString();
+                            rowDataTemp[2] = dronesDict[i].eventId.ToString();
+                            rowDataTemp[3] = dronesDict[j].eventNo.ToString();
+                            rowDataTemp[4] = dronesDict[j].droneId.ToString();
+                            rowDataTemp[5] = dronesDict[j].eventId.ToString();
+                            rowDataTemp[6] = timeCounter.ToString();                       
+                            rowData.Add(rowDataTemp);
                         }
-                        
+
                         dronesDict[i].isCollided = true;
                         dronesDict[j].isCollided = true;
                     }
@@ -411,8 +434,9 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
 
-        string filename = "Assets/Log/ONE-WAY/" + numDrones + "/" + "4rows" + ".txt";
-        string filename_success = "Assets/Log/ONE-WAY/" + numDrones + "/" + "4rows" + "_success.txt";
+        string filename = "Assets/Log/ONE-WAY/" + numDrones.ToString() + "/" + numDrones.ToString() + "_40Events.txt";
+        string filename_success = "Assets/Log/ONE-WAY/" + numDrones.ToString() + "/" + numDrones.ToString() + "_40Events_success.txt";
+
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
         StreamWriter fileWriter_success = new StreamWriter(filename_success, true);
@@ -432,7 +456,8 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("System error: " + systemError);
         fileWriter.WriteLine("User error: " + userError);
-        if (userError == 18)
+
+        if ((userError) == 18)
         {
             fileWriter_success.WriteLine("==========User Study Data==========");
             fileWriter_success.WriteLine("Number of drones: " + numDrones);
@@ -445,6 +470,30 @@ public class TrafficControl : MonoBehaviour
 
         fileWriter.Close();
         fileWriter_success.Close();
+
+        //CSV file
+        string[][] output = new string[rowData.Count][];
+
+        for(int  i=0; i<output.Length; i++)
+        {
+            output[i] = rowData[i];
+        }
+
+        int length = output.GetLength(0);
+        string delimiter = ",";
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int index = 0; index < length; index++)
+        {
+            sb.AppendLine(string.Join(delimiter, output[index]));
+        }
+
+        string csv_filepath = "Assets/Log/ONE-WAY/" + numDrones.ToString() + "/" + numDrones.ToString() + "_40Events_" + seed_string + "seed_CSV.csv";
+
+        StreamWriter outStream = System.IO.File.CreateText(csv_filepath);
+        outStream.WriteLine(sb);
+        outStream.Close();
     }
 
 
