@@ -11,7 +11,8 @@ public class Utility : MonoBehaviour
     public static bool IS_RND_TAKEOFF = true; //Used to choose random drone or next in interable upon assigning an event in TafficControl: Update()
 
     // game logic constant
-    public const int EXIT_TIME = 6000;  // the total time that the game is running
+    public const int EXIT_TIME = 180;  // the total time that the game is running
+    public static Dictionary<int, float> EVENT_INTERVALS = new Dictionary<int, float>() { { 10, 1f }, { 20, 0.5f }, { 30,  1/3f} };
 
     // drone logic constant
     public static readonly float BOUND_DIM = 1.4f, INTERACT_DIM = 2.3f, REPLAN_DIM = 2.2f;
@@ -27,9 +28,11 @@ public class Utility : MonoBehaviour
     private static float horizonInterval = -2.26f;
     private static float verticalInterval = 1.7f;
     private static float parkingInterval = 2.4f;
+    public static int numEventRows = 2;
+    public static int numDroneRows = 1;
 
-    public static Vector3[] shelves = InitShelves(ShelfBasePos, horizonInterval, verticalInterval, 2, 5);
-    public static Vector3[] parking = InitParkingLot(ParkingBasePos, parkingInterval, parkingInterval, 2, 5);
+    public static Vector3[] shelves = InitShelves(ShelfBasePos, horizonInterval, verticalInterval, numEventRows, 10);
+    public static Vector3[] parking = InitParkingLot(ParkingBasePos, parkingInterval, parkingInterval, numDroneRows, 10);
 
 
     public static Vector3[] InitShelves(Vector3 basePos, float horizonInterval, float verticalInterval, int numLayer, int itemPerLayer)
@@ -56,7 +59,7 @@ public class Utility : MonoBehaviour
             for (int j = 0; j < itemPerLayer; j++)
             {
                 int curIdx = i * itemPerLayer + j;
-                Vector3 curPos = new Vector3(basePos.x - j * horizonInterval, basePos.y + i * verticalInterval, basePos.z);
+                Vector3 curPos = new Vector3(basePos.x - j * horizonInterval, basePos.y, basePos.z + i * verticalInterval);
                 ParkingLot[curIdx] = curPos;
 
             }
@@ -93,9 +96,8 @@ public class Utility : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log("Utility: Awake()");
         DELTATIME = Time.fixedDeltaTime;
         DRONE_SPEED = (INTERACT_DIM - BOUND_DIM) / INTERACT_TIME * DELTATIME;
-     
+        //DRONE_SPEED *= 5;
     }
 }
