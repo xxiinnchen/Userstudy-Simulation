@@ -8,7 +8,6 @@ using System.IO;
 
 using UnityEngine.SceneManagement;
 
-
 public class TrafficControl : MonoBehaviour
 {
     public static string seed_filename = "Assets/Scripts/SEED.txt";
@@ -17,14 +16,15 @@ public class TrafficControl : MonoBehaviour
     public static int SEED = strToInt(seed_string);
 
     public static GameObject worldobject;
-    
+
 
     public GameObject droneBaseObject;
     public GameObject eventBaseObject;
-   
-    public int numDrones = 10;
-    public int EVENT_INTERVAL = 1;
+
+    public static int numDrones = 20;
+    public float EVENT_INTERVAL = Utility.EVENT_INTERVALS[numDrones];
     public int EXIT_TIME = 180;
+    public int MAX_SEED;
 
     // Drone and Event Dictionaries 
     public static Dictionary<int, Drone> dronesDict = new Dictionary<int, Drone>();
@@ -41,7 +41,6 @@ public class TrafficControl : MonoBehaviour
 
 
     // User Data variables
-
     public int systemError = 0;
     public int userError = 0;
     //private int timeCounter = 0;
@@ -51,6 +50,9 @@ public class TrafficControl : MonoBehaviour
     private int cleanCounter = 0;
     private int successEventCounter = 0;
     private int totalEventCounter = 0;
+    private double sixtysecsCounter = 0; // counts the number of seconds already elapsed in that minute
+    private int minuteCounter = 1; // which minute currently in 1, 2 or 3
+    public int currMinuteCrashCounter = 0; // the number of crashes for the current minute
 
     // Functional Variables
     private float AVE_TIME;
@@ -58,7 +60,7 @@ public class TrafficControl : MonoBehaviour
 
     public static int strToInt(string str)
     {
-        int numVal= -1;
+        int numVal = -1;
         try
         {
             numVal = Int32.Parse(str);
@@ -69,7 +71,7 @@ public class TrafficControl : MonoBehaviour
         }
         Debug.Log("Retreiving Seed from SEED.txt: " + numVal);
         reader.Close();
-    
+
         return numVal;
     }
 
@@ -87,28 +89,66 @@ public class TrafficControl : MonoBehaviour
 
     public void initDrones(int num)
     {
-        //Debug.Log("Initializing Drones");
-        int units = 5;
-        int rowcapacity = 5;
-        int parkingInterval = units / rowcapacity;
-        int rowNeeded = num / rowcapacity;
         for (int i = 0; i < num; i++)
         {
-            Drone newDrone = new Drone(i, parkinglot[parkingInterval * i]);
+            Drone newDrone = new Drone(i, parkinglot[i]);
             dronesDict.Add(i, newDrone);
             availableDronesId.Add(i);
-        } 
+        }
+    }
+
+    public void initEvent(int num)
+    {
+        for (int i = 0; i < num; i++)
+        {
+            Event newEvent = new Event(i, shelves[i]);
+            eventsDict.Add(i, newEvent);
+        }
+    }
+
+
+    /// <summary>
+    /// Check if the distance between line 1 given by two points and line 2 given by another set of points is less than some bound
+    /// </summary>
+    /// <param name="p1"></param> Point of line 1
+    /// <param name="p2"></param> Another point of line 1
+    /// <param name="p3"></param> Point of line 2
+    /// <param name="p4"></param> Another point of line 2
+    /// <returns></returns>
+    public bool IsWithinCollisionBound(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
+    {
+        Vector3 v1, v2, w;
+        v1 = p2 - p1;
+        v2 = p4 - p3;
+        w = p4 - p1;
+
+        Vector4 v1p, v2p, wp, identity;
+        v1p = new Vector4(v1.x, v1.y, v1.z, 0);
+        v2p = new Vector4(v2.x, v2.y, v2.z, 0);
+        wp = new Vector4(w.x, w.y, w.z, 0);
+        identity = new Vector4(0, 0, 0, 1);
+
+        Matrix4x4 matrix_denominator = new Matrix4x4(v1p, v2p, wp, identity);
+        double det = matrix_denominator.determinant;
+
+        double nominator = Vector3.Cross(v1, v2).magnitude;
+
+        double dist = det / nominator;
+
+        if (dist < Utility.BOUND_DIM)
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
     }
 
 
     // Use this for initialization
     void Start()
     {
-        
-        Debug.Log("Traffic Control: Start()!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        //seed = 2;
         AVE_TIME = Utility.AVGTIME;
-        Debug.Log(SEED);
         rnd = new System.Random(SEED);
         waitingEventsId.rnd = new System.Random(SEED);
         availableDronesId.rnd = new System.Random(SEED);
@@ -116,13 +156,7 @@ public class TrafficControl : MonoBehaviour
         worldobject = this.gameObject;
         dronesDict = new Dictionary<int, Drone>();
         initDrones(numDrones);
-
-        //Debug.Log("Initializing Events");
-        for (int i = 0; i < shelves.Length; i++)
-        {
-            Event newEvent = new Event(i, shelves[i]);
-            eventsDict.Add(i, newEvent);
-        }
+        initEvent(shelves.Length);        
     }
 
     // Update is called once per frame
@@ -130,7 +164,6 @@ public class TrafficControl : MonoBehaviour
     {
         if (timeCounter - lastPrint > 1)
         {
-            //Debug.Log("Update time: " + timeCounter);
             lastPrint = timeCounter;
         }
 
@@ -146,28 +179,111 @@ public class TrafficControl : MonoBehaviour
               //  Debug.Log("New Event Created");
 
                 int newIdx = GenRandEvent();
-                //Event newWaitingEvent = eventsDict[newIdx];
                 waitingEventsId.Add(newIdx);
-
                 totalEventCounter++;
             }
         }
 
+        // try to gaurentee there are 6 crashes per minute
+        if (sixtysecsCounter < 60)
+        {
+            sixtysecsCounter += Time.fixedDeltaTime;
+        } else
+        {
+            currMinuteCrashCounter = 0;
+            sixtysecsCounter = 0;
+        }
+
         if (availableDronesId.Count > 0 && waitingEventsId.Count > 0)
         {
-            //Debug.Log("Assigning event to drone");
-
+            if (currMinuteCrashCounter >= 6)
+            {
+                Debug.Log("???????????????????????");
+                PairPermutation formPermute = new PairPermutation();
+                int[] droneIDArray = availableDronesId.getList().ToArray();
+                int[] eventIDArray = waitingEventsId.getList().ToArray();
+                Debug.Log(string.Join(" ", droneIDArray));
+                List<int[]> dronePermutations = PairPermutation.GetPermutation(droneIDArray);
+                
+                int counter = 0;
+                bool hasSolution = false;
+                foreach (int[] permute in dronePermutations)
+                {
+                    int numOptions = permute.Length;
+                    int size = numOptions * numOptions;
+                    List<bool> pairIntersection = new List<bool>();
+                    bool collision = false;
+                    for (int i = 0; i < numOptions - 1; i++)
+                    {
+                        for  (int j = 0; j< numOptions - 1; j++)
+                        {
+                            Vector3 p1, p2, p3, p4;
+                            p1 = eventsDict[eventIDArray[i]].pos;
+                            p2 = dronesDict[droneIDArray[i]].hoverPos;
+                            p3 = eventsDict[eventIDArray[j]].pos;
+                            p4 = dronesDict[droneIDArray[j]].hoverPos;
+                            collision = IsWithinCollisionBound(p1, p2, p3, p4);
+                            Debug.LogFormat("Drone {0} Event {1} | Drone {2} Event{3} could crash!!!!!!!", droneIDArray[i], eventIDArray[i], droneIDArray[j], eventIDArray[j]);
+                            if (collision)
+                            {
+                                break;
+                            }
+                        }
+                        if (collision)
+                        {
+                            break;
+                        }
+                    }
+                    if (!collision)
+                    {
+                        hasSolution = true;
+                        break;
+                    } else
+                    {
+                        collision = false;
+                        counter++;
+                    }
+                }
+                if (hasSolution) {
+                    int[] solution = dronePermutations[counter];
+                    Utility.IS_RND_TAKEOFF = false;
+                    OrderedSet<int> newAvailableDronesID = new OrderedSet<int>();
+                    foreach (int item in solution)
+                    {
+                        newAvailableDronesID.Add(item);
+                    }
+                    availableDronesId = newAvailableDronesID;
+                }
+            } else
+            {
+                Utility.IS_RND_TAKEOFF = true;  
+            }
             int e = waitingEventsId.Next();
             int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
-
-            dronesDict[d].AddEvent(eventsDict[e]);
-            // Debug.Log("assign event " + e + " to drone " + d + " with direction: " + dronesDict[d].direction);
-
+            Drone nextDrone = dronesDict[d];
+            Event nextEvent = eventsDict[e];
+            nextDrone.AddEvent(nextEvent);
             availableDronesId.Remove(d);
             workingDronesId.Add(d);
             waitingEventsId.Remove(e);
             ongoingEventsId.Add(e);
         }
+        //if (availableDronesId.Count > 0 && waitingEventsId.Count > 0)
+        //{
+        //    //Debug.Log("Assigning event to drone");
+        //    int e = waitingEventsId.NextRnd();
+        //    //int e = waitingEventsId.Next();
+        //    int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
+
+
+        //    Drone avalibleDrone = dronesDict[d];
+
+        //    avalibleDrone.AddEvent(eventsDict[e]);
+        //    availableDronesId.Remove(d);
+        //    workingDronesId.Add(d);
+        //    waitingEventsId.Remove(e);
+        //    ongoingEventsId.Add(e);
+        //}
 
         // apply force meanwhile check collision 
         foreach (int i in workingDronesId)
@@ -175,7 +291,6 @@ public class TrafficControl : MonoBehaviour
             //Debug.Log("Drone Collision Loop 1");
             foreach (int j in workingDronesId)
             {
-                // <Changed>
                 if (i == j)
                 {
                     continue;
@@ -191,22 +306,26 @@ public class TrafficControl : MonoBehaviour
                     if (dis < Utility.BOUND_DIM)
                     {
                         //Debug.Log("2. DroneID " + dronesDict[i].droneId + " Drone Collision");
-
-                        userError++;
-                        dronesDict[i].status = Drone.DroneStatus.COLLIDE;
-                        dronesDict[j].status = Drone.DroneStatus.COLLIDE;
+                        if (!dronesDict[i].isCollided && !dronesDict[j].isCollided)
+                        {
+                            userError++;
+                            currMinuteCrashCounter++;
+                            Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  =====", i, j);
+                        }
+                        
+                        dronesDict[i].isCollided = true;
+                        dronesDict[j].isCollided = true;
                     }
                     else
                     {
                         systemError++;
                     }
                 }
-                // </Changed>
 
             }
-            // update direction
             dronesDict[i].direction = Vector3.Normalize(dronesDict[i].dstPos - dronesDict[i].curPos);
         }
+
 
         // check status
         // move every working drone
@@ -214,46 +333,31 @@ public class TrafficControl : MonoBehaviour
         {
             Drone currDrone = dronesDict[i];
             Drone.DroneStatus status = currDrone.status;
+
             if (status == Drone.DroneStatus.PARKED)
             {
                 continue;
             }
-            else if (status == Drone.DroneStatus.COLLIDE)
-            {
-                // Repark drone
-                currDrone.curPos = currDrone.parkingPos;
-                // check the event can be added back
-                int eid = currDrone.eventId;
-                waitingEventsId.Add(eid);
-
-                //Event curEvent = eventsDict[currDrone.eventId];
-
-                currDrone.status = Drone.DroneStatus.PARKED;
-            }
-
 
             Drone.MoveStatus moveStatus = currDrone.Move();
 
-            if (i == 1)
-            {
-                //Debug.Log("5. Drone " + dronesDict[i].droneId + " moveStatus " + moveStatus + " status "+ dronesDict[i].status + " Speed " + dronesDict[i].SPEED + " Dirc" + dronesDict[i].direction + " Dist " + Utility.CalDistance(dronesDict[i].curPos, dronesDict[i].eventPos));
-
-            }
 
             if (moveStatus == Drone.MoveStatus.END_TO_SHELF)  // drone status 2 --> 3
             {
-                //Debug.Log("0. DroneID " + dronesDict[i].droneId + " One -way trip success");
-                //Event curEvent = eventsDict[dronesDict[i].eventId];
                 ongoingEventsId.Remove(currDrone.eventId);
-            }
-            else if (moveStatus == Drone.MoveStatus.END_WHOLE_TRIP)  // end of whole trip
-            {
-                Debug.Log("1. DroneID " + currDrone.droneId + " Two-way trip success");
-                successEventCounter++;
+                if (!currDrone.isCollided)
+                {
+                    successEventCounter++;
+                    Debug.LogFormat("Drone {0} | event {1} | COMPLETE", i, currDrone.eventId);
+                } else
+                {
+                    Debug.LogFormat("Drone {0} event {1} | CRASH", i, currDrone.eventId);
+                }
             }
 
             if (currDrone.status == Drone.DroneStatus.PARKED)
             {
+                currDrone.isCollided = false;
                 workingDronesId.Remove(i);
                 availableDronesId.Add(i);
                 ongoingEventsId.Remove(currDrone.eventId);
@@ -264,8 +368,9 @@ public class TrafficControl : MonoBehaviour
         eventTimer += Time.fixedDeltaTime;
         cleanCounter++;
 
+
 #if IS_USER_STUDY
-        if (SEED <= 5)
+        if (SEED <= MAX_SEED)
         {
             if (timeCounter >= EXIT_TIME)
             {
@@ -346,18 +451,20 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
 
-        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test3.txt";
+        string filename = "Assets/Log/ONE-WAY/20/" + numDrones + "_180secs_2.txt";
+        string filename_success = "Assets/Log/ONE-WAY/20/" + numDrones + "_180secs_Success_2.txt";
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
+        StreamWriter fileWriter_success = new StreamWriter(filename_success, true);
 
         fileWriter.WriteLine("CURRENT TIME: " + System.DateTime.Now);
         fileWriter.WriteLine("==========Basic Parameters==========");
-        fileWriter.WriteLine("Interface " + SceneManager.GetActiveScene().name);
-        fileWriter.WriteLine("FPS: " + 1 / Time.deltaTime);
+        //fileWriter.WriteLine("Interface " + SceneManager.GetActiveScene().name);
+        //fileWriter.WriteLine("FPS: " + 1 / Time.deltaTime);
         fileWriter.WriteLine("Drone speed: " + Utility.DRONE_SPEED);
         //fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("Number of drones: " + numDrones);
-        fileWriter.WriteLine("Average time: " + AVE_TIME);
+        //fileWriter.WriteLine("Average time: " + AVE_TIME);
         fileWriter.WriteLine("Event interval: " + EVENT_INTERVAL);
         fileWriter.WriteLine("Number of events: " + totalEventCounter);
 
@@ -365,6 +472,14 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("System error: " + systemError);
         fileWriter.WriteLine("User error: " + userError);
+        if (userError == 18)
+        {
+            fileWriter_success.WriteLine("==========User Study Data==========");
+            fileWriter_success.WriteLine("Number of drones: " + numDrones);
+            fileWriter_success.WriteLine("Seed: " + SEED);
+            fileWriter_success.WriteLine("System error: " + systemError);
+            fileWriter_success.WriteLine("User error: " + userError);
+        }
         fileWriter.WriteLine("Number success events: " + successEventCounter);
         fileWriter.WriteLine(" ");
 
@@ -377,7 +492,7 @@ public class TrafficControl : MonoBehaviour
     {
         float successRate = successEventCounter / numDrones;
         
-        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test3.txt"; 
+        string filename = "Assets/Log/" + SceneManager.GetActiveScene().name + "_" + numDrones + "test4.txt"; 
         // write to log file
         StreamWriter fileWriter = new StreamWriter(filename, true);
 
@@ -395,7 +510,7 @@ public class TrafficControl : MonoBehaviour
         fileWriter.WriteLine("==========User Study Data==========");
         fileWriter.WriteLine("Seed: " + SEED);
         fileWriter.WriteLine("System error: " + systemError);
-        fileWriter.WriteLine("User error: " + userError);
+        fileWriter.WriteLine("User error: " + userError / 2);
         fileWriter.WriteLine("Number success events: " + successEventCounter);
         fileWriter.WriteLine(" ");
 
