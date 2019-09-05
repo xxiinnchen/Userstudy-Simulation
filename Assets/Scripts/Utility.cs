@@ -30,7 +30,7 @@ public class Utility : MonoBehaviour
     private static float parkingInterval = 2.4f;
 
     public static Vector3[] shelves = InitShelves(ShelfBasePos, horizonInterval, verticalInterval, 4, 10);
-    public static Vector3[] parking = InitParkingLot(ParkingBasePos, parkingInterval, parkingInterval, 2, 10);
+    public static Vector3[] parking = InitParkingLot(ParkingBasePos, parkingInterval, parkingInterval, 3, 10);
 
 
     public static Vector3[] InitShelves(Vector3 basePos, float horizonInterval, float verticalInterval, int numLayer, int itemPerLayer)

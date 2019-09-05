@@ -12,14 +12,18 @@ using UnityEngine.SceneManagement;
 
 public class TrafficControl : MonoBehaviour
 {
+
+    public bool FlightPathProvided = false;
+
     public static string seed_filename = "Assets/Scripts/SEED.txt";
     public static StreamReader reader = new StreamReader(seed_filename);
     static string seed_string = reader.ReadLine();
     public static int SEED = strToInt(seed_string);
 
-    //public static string csv_filename = "Assets/Log/ONE-WAY/20/20_40Events_1seed_CSV.csv";
-    //public static StreamReader csv_reader = new StreamReader(csv_filename);
-    //public static List<List<float>> crash_record = new List<List<float>>();
+    public static string csv_filename = "Assets/Log/flightplan.csv";
+    public static StreamReader csv_reader = new StreamReader(csv_filename);
+    public static List<List<int>> flightPlan = new List<List<int>>();
+    public static int flightPlanIndex = 0;
     
 
     public static GameObject worldobject;
@@ -28,9 +32,10 @@ public class TrafficControl : MonoBehaviour
     public GameObject droneBaseObject;
     public GameObject eventBaseObject;
 
-    public static int numDrones = 20;
+    public static int numDrones = 30;
     public float EVENT_INTERVAL = Utility.EVENT_INTERVALS[numDrones];
     public int EXIT_TIME = 180;
+    public float timeCounter = 0;
     public int MAX_SEED;
 
     // Drone and Event Dictionaries 
@@ -38,6 +43,7 @@ public class TrafficControl : MonoBehaviour
     public static Dictionary<int, Event> eventsDict = new Dictionary<int, Event>();
 
     public OrderedSet<int> waitingEventsId = new OrderedSet<int>();
+    public OrderedSet<List<int>> waitingEventsId_nexteventId_teleportId = new OrderedSet<List<int>>();
     public HashSet<int> ongoingEventsId = new HashSet<int>();
 
     public OrderedSet<int> availableDronesId = new OrderedSet<int>();
@@ -50,7 +56,7 @@ public class TrafficControl : MonoBehaviour
     // User Data variables
     public int systemError = 0;
     public int userError = 0;
-    private float timeCounter = 0;
+    //public float timeCounter = 0;
     private float eventTimer = 0;
     private float lastPrint = 0;
     private int successEventCounter = 0;
@@ -64,7 +70,7 @@ public class TrafficControl : MonoBehaviour
     // Functional Variables
     private float AVE_TIME;
     private System.Random rnd;
-/*
+
     public void ReadCSV()
     {
         string header = csv_reader.ReadLine();
@@ -77,26 +83,31 @@ public class TrafficControl : MonoBehaviour
 
             if(!String.IsNullOrEmpty(line))
             {
-                Debug.Log(line);
-                List<float> values_float = new List<float>();
+                //Debug.Log(line);
+                List<int> values_int = new List<int>();
 
                 foreach (string value in values)
                 {
-                    float value_float = strToFloat(value);
-                    values_float.Add(value_float);
+                    int value_int = strToInt(value);
+                    values_int.Add(value_int);
                 }
-                crash_record.Add(values_float);
+                flightPlan.Add(values_int);
             }
                 
         }
     }
-    */
+    
 
     public static float strToFloat(string str)
     {
         float numVal = -1;
         try
         {
+            if (str=="none")
+            {
+                return -1;
+            }
+
             numVal = float.Parse(str);
         }
         catch (FormatException e)
@@ -115,13 +126,18 @@ public class TrafficControl : MonoBehaviour
         int numVal= -1;
         try
         {
+            if (str == "none")
+            {
+                return -1;
+            }
+
             numVal = Int32.Parse(str);
         }
         catch (FormatException e)
         {
             Debug.Log("Invalid Seed file." + e);
         }
-        Debug.Log("Retreiving Seed from SEED.txt: " + numVal);
+        //Debug.Log("Retreiving Seed from SEED.txt: " + numVal);
         reader.Close();
     
         return numVal;
@@ -200,7 +216,7 @@ public class TrafficControl : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //ReadCSV();
+        ReadCSV();
         AVE_TIME = Utility.AVGTIME;
         rnd = new System.Random(SEED);
         waitingEventsId.rnd = new System.Random(SEED);
@@ -239,6 +255,8 @@ public class TrafficControl : MonoBehaviour
             lastPrint = timeCounter;
         }
 
+        Debug.Log(Time.deltaTime);
+
         //Debug.LogFormat("{0} {1}", eventTimer, EVENT_INTERVAL);
         // Check if to generate new random event 
         if (eventTimer > EVENT_INTERVAL)
@@ -246,29 +264,148 @@ public class TrafficControl : MonoBehaviour
             eventTimer = 0;
             //Debug.Log("New Event Attempt");
 
-            if (waitingEventsId.Count + ongoingEventsId.Count < shelves.Length - 1)
+            if ( (waitingEventsId.Count + ongoingEventsId.Count < shelves.Length - 1) || (waitingEventsId_nexteventId_teleportId.Count + ongoingEventsId.Count < shelves.Length - 1) )
             {
-              //  Debug.Log("New Event Created");
+                //  Debug.Log("New Event Created");
 
-                int newIdx = GenRandEvent();
-                waitingEventsId.Add(newIdx);
+                if (FlightPathProvided)
+                {
+                    try
+                    {
+                        //Debug.Log("Check 1");
+                        List<int> currentRow = flightPlan[flightPlanIndex];
+                        List<int> temp_values = new List<int> { 0, 0, 0 };
+
+
+                        //Debug.Log("Check 2");
+                        temp_values[0] = currentRow[1] + 10 * currentRow[2];          // shelfIndexX + shelfIndexY*10
+                        temp_values[1] = currentRow[3];                             // followedBy
+                        temp_values[2] = currentRow[4] + 10 * currentRow[5];        // teleportToLaunchPadIndexX + teleportToLaunchPadIndexY*10
+
+                        //Debug.Log("Check 3");
+                        //Debug.Log("Added Event: " + temp_values[0].ToString() + ":" + temp_values[1].ToString() + ":" + temp_values[2].ToString());
+                        waitingEventsId_nexteventId_teleportId.Add(temp_values);
+
+                        flightPlanIndex++;
+                    }
+                    catch (ArgumentOutOfRangeException err)
+                    {
+                        Debug.Log("### 1.INVALID EVENT." + err);
+                        Debug.Log("flightPlanIndex" + flightPlanIndex.ToString());
+                        Debug.Log("flightPlan" + flightPlan.Count.ToString());
+
+                    }
+                }
+                else
+                {
+                    int newIdx = GenRandEvent();
+                    waitingEventsId.Add(newIdx);
+                }
             }
         }
 
-        if (availableDronesId.Count > 0 && waitingEventsId.Count > 0)
+        if (availableDronesId.Count > 0 && (waitingEventsId.Count > 0 || waitingEventsId_nexteventId_teleportId.Count > 0 ))
         {
-            int e = waitingEventsId.Next();
-            int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
-         
-            Drone availableDrone = dronesDict[d];
 
-            availableDrone.AddEvent(eventsDict[e]);
-            availableDrone.eventNo = totalEventCounter;
-            availableDronesId.Remove(d);
-            workingDronesId.Add(d);
-            waitingEventsId.Remove(e);
-            ongoingEventsId.Add(e);
-            totalEventCounter++;
+            if (FlightPathProvided)
+            {
+                try
+                {
+                    List<int> e = waitingEventsId_nexteventId_teleportId.Next();
+                    int eventId = e[0];
+                    int nextEventId = e[1];
+                    int teleportId = e[2];
+                    bool droneFound = false;
+                
+
+                    //Debug.Log("Check 4");
+
+                    foreach (Drone availableDrone in dronesDict.Values)
+                    {
+                        int d = availableDrone.droneId;
+
+                        if (availableDrone.nextEvent == totalEventCounter && availableDronesId.Contains(d))
+                        {
+                            //Debug.Log("Check 5.a");
+
+                            availableDronesId.Remove(d);
+                        
+                            availableDrone.AddEvent(eventsDict[eventId]);
+                            availableDrone.eventNo = totalEventCounter;
+                            availableDrone.nextEvent = nextEventId;
+
+                            availableDrone.parkingPos = Utility.parking[teleportId];
+                            //availableDrone.hoverPos = availableDrone.parkingPos + availableDrone.hoverShift;
+
+                            availableDronesId.Remove(d);
+                            workingDronesId.Add(d);
+                            waitingEventsId_nexteventId_teleportId.Remove(e);
+                            ongoingEventsId.Add(eventId);
+
+                            //Debug.Log("OPTIMIZED ASSIGNMENT");
+                            //Debug.Log("OP | Event No: " + totalEventCounter.ToString() + " | Drone: " + d.ToString() + " | Dest Event: " + eventId.ToString() );
+                            //Debug.Log("Drone " + d.ToString() + " respawn point changed to " + teleportId.ToString());
+
+                            totalEventCounter++;
+
+                            droneFound = true;
+                        }
+
+                        if (droneFound)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!droneFound && totalEventCounter<numDrones)
+                    {
+                        //Debug.Log("Check 5.b");
+
+                        int d = availableDronesId.Next();
+                        Drone availableDrone = dronesDict[d];
+
+                        availableDrone.AddEvent(eventsDict[eventId]);
+                        availableDrone.eventNo = totalEventCounter;
+                        availableDrone.nextEvent = nextEventId;
+
+                        availableDrone.parkingPos = Utility.parking[teleportId];
+                        //availableDrone.hoverPos = availableDrone.parkingPos + availableDrone.hoverShift;
+
+                        availableDronesId.Remove(d);
+                        workingDronesId.Add(d);
+                        waitingEventsId_nexteventId_teleportId.Remove(e);
+                        ongoingEventsId.Add(eventId);
+
+                        Debug.Log("Event No: " + totalEventCounter.ToString() + " | Drone: " + d.ToString() + " | Dest Event: " + eventId.ToString() );
+                        //Debug.Log("Drone " + d.ToString() + " respawn point changed to " + teleportId.ToString());
+
+                        totalEventCounter++;
+                    }
+                }
+                catch (ArgumentOutOfRangeException err)
+                {
+                    Debug.Log("### 2.INVALID EVENT." + err);
+                }
+
+                //totalEventCounter++;
+
+            }
+            else
+            {
+                int e = waitingEventsId.Next();
+                int d = Utility.IS_RND_TAKEOFF ? availableDronesId.NextRnd() : availableDronesId.Next();
+
+                Drone availableDrone = dronesDict[d];
+
+                availableDrone.AddEvent(eventsDict[e]);
+                availableDrone.eventNo = totalEventCounter;
+                availableDronesId.Remove(d);
+                workingDronesId.Add(d);
+                waitingEventsId.Remove(e);
+                ongoingEventsId.Add(e);
+                totalEventCounter++;
+            }
+        
         }
 
         // apply force meanwhile check collision 
@@ -357,7 +494,12 @@ public class TrafficControl : MonoBehaviour
             {
                 currDrone.isCollided = false;
                 workingDronesId.Remove(i);
-                availableDronesId.Add(i);
+
+                if (currDrone.nextEvent != -1)
+                {
+                    availableDronesId.Add(i);
+                }
+
                 ongoingEventsId.Remove(currDrone.eventId);
             }
         }

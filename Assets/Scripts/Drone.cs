@@ -12,7 +12,7 @@ public class Drone {
     public Vector3 dstPos; //current destination position
     public Vector3 direction; // Direction for drone to fly in
     public Vector3 epsilon = new Vector3(0.1f, 0.1f, 0.1f);
-    public static Vector3 hoverShift = new Vector3(0f, 1.5f, 0f);
+    public Vector3 hoverShift = new Vector3(0f, 1.5f, 0f);
 
 
     // Drone properties
@@ -21,6 +21,7 @@ public class Drone {
     public int droneId;
     public int eventId;
     public int eventNo;
+    public int nextEvent = -2;
 
     ////NEW
     //public static System.Random repark_rnd = new System.Random(1024);
@@ -58,6 +59,7 @@ public class Drone {
         gameObjectPointer.layer = 2;
         gameObjectPointer.transform.parent = TrafficControl.worldobject.transform;
 
+
     }
 
     public void AddEvent(Event e)
@@ -90,6 +92,8 @@ public class Drone {
     public MoveStatus Move(){
         MoveStatus flag = MoveStatus.OTHER;
 
+        //Debug.Log("Drone " + droneId.ToString() + " Speed " + SPEED.ToString());
+
         curPos = (status == DroneStatus.PARKED) ? curPos : curPos + direction * SPEED;
 
         // if drone is moving(drone not parked)
@@ -102,6 +106,7 @@ public class Drone {
                 {
                     status = DroneStatus.TO_SHELF;
                     dstPos = eventPos;
+                    hoverPos = parkingPos + hoverShift;
                 }
             }
 

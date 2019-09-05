@@ -1,0 +1,645 @@
+CURRENT TIME: 9/4/2019 3:19:47 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 62.37175
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 8
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 3:19:57 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 58.95218
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 0
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:23:25 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.36205
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 0
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:23:35 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 62.41457
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 7
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:24:05 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.85501
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 23
+==========User Study Data==========
+Seed: 1
+System error: 3550
+User error: 1
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:24:55 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 62.43211
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 32
+==========User Study Data==========
+Seed: 1
+System error: 17628
+User error: 3
+Number success events: 2
+ 
+CURRENT TIME: 9/4/2019 4:25:10 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 58.75233
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 8
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:26:33 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 59.49017
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 25
+==========User Study Data==========
+Seed: 1
+System error: 4142
+User error: 1
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:28:19 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 62.45706
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 30
+==========User Study Data==========
+Seed: 1
+System error: 6082
+User error: 2
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:30:57 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 61.77415
+Drone speed: 0
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 0
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:31:24 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 62.2921
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 0
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:32:31 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.38246
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 0
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:34:32 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 59.66445
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 0
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:35:48 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.89021
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 0
+==========User Study Data==========
+Seed: 1
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:37:20 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.36861
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 28
+==========User Study Data==========
+Seed: 1
+System error: 5442
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:39:11 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 58.04504
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 30
+==========User Study Data==========
+Seed: 1
+System error: 10858
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:44:04 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.3129
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 27
+==========User Study Data==========
+Seed: 1
+System error: 4928
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 4:47:29 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 59.49017
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 155
+==========User Study Data==========
+Seed: 1
+System error: 144250
+User error: 17
+Number success events: 15
+ 
+CURRENT TIME: 9/4/2019 5:00:41 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.59248
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 136
+==========User Study Data==========
+Seed: 1
+System error: 132370
+User error: 15
+Number success events: 15
+ 
+CURRENT TIME: 9/4/2019 5:02:48 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.36315
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 30
+==========User Study Data==========
+Seed: 1
+System error: 1274
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 5:06:11 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 62.19176
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 30
+==========User Study Data==========
+Seed: 1
+System error: 59370
+User error: 1
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 5:09:30 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.92138
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 151
+==========User Study Data==========
+Seed: 1
+System error: 111210
+User error: 17
+Number success events: 28
+ 
+CURRENT TIME: 9/4/2019 5:20:29 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 59.13101
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 65
+==========User Study Data==========
+Seed: 1
+System error: 38368
+User error: 8
+Number success events: 10
+ 
+CURRENT TIME: 9/4/2019 5:21:23 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.36242
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 8
+==========User Study Data==========
+Seed: 1
+System error: 52
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 5:27:33 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 53.11013
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 71
+==========User Study Data==========
+Seed: 1
+System error: 42920
+User error: 9
+Number success events: 11
+ 
+CURRENT TIME: 9/4/2019 5:32:03 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 58.75648
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 30
+==========User Study Data==========
+Seed: 1
+System error: 5150
+User error: 2
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 5:43:52 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 41.92415
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 224
+==========User Study Data==========
+Seed: 1
+System error: 168416
+User error: 26
+Number success events: 47
+ 
+CURRENT TIME: 9/4/2019 5:47:11 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 56.78141
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 1882
+==========User Study Data==========
+Seed: 1
+System error: 23114
+User error: 3
+Number success events: 8
+ 
+CURRENT TIME: 9/4/2019 5:50:11 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 46.95761
+Drone speed: 0
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 29
+==========User Study Data==========
+Seed: 1
+System error: 23114
+User error: 3
+Number success events: 8
+ 
+CURRENT TIME: 9/4/2019 6:11:11 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 46.62592
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 227
+==========User Study Data==========
+Seed: 1
+System error: 214280
+User error: 30
+Number success events: 60
+ 
+CURRENT TIME: 9/4/2019 6:22:36 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 62.41535
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 209
+==========User Study Data==========
+Seed: 1
+System error: 157116
+User error: 24
+Number success events: 43
+ 
+CURRENT TIME: 9/4/2019 6:27:06 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 53.79352
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 40
+==========User Study Data==========
+Seed: 1
+System error: 23664
+User error: 4
+Number success events: 6
+ 
+CURRENT TIME: 9/4/2019 6:32:49 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 10
+Drone speed: 0
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 227
+==========User Study Data==========
+Seed: 1
+System error: 214280
+User error: 30
+Number success events: 60
+ 
+CURRENT TIME: 9/4/2019 6:35:25 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 54.18145
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 133
+==========User Study Data==========
+Seed: 1
+System error: 91698
+User error: 16
+Number success events: 36
+ 
+CURRENT TIME: 9/4/2019 6:38:35 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: Infinity
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 112
+==========User Study Data==========
+Seed: 1
+System error: 83710
+User error: 14
+Number success events: 32
+ 
+CURRENT TIME: 9/4/2019 6:43:13 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 49.91041
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 126
+==========User Study Data==========
+Seed: 1
+System error: 89724
+User error: 16
+Number success events: 35
+ 
+CURRENT TIME: 9/4/2019 6:49:12 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 46.72373
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 193
+==========User Study Data==========
+Seed: 1
+System error: 174122
+User error: 25
+Number success events: 48
+ 
+CURRENT TIME: 9/4/2019 6:53:02 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 50.50122
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 151
+==========User Study Data==========
+Seed: 1
+System error: 127712
+User error: 19
+Number success events: 37
+ 
+CURRENT TIME: 9/4/2019 1:02:57 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.36387
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 174
+==========User Study Data==========
+Seed: 1
+System error: 146600
+User error: 22
+Number success events: 43
+ 
+CURRENT TIME: 9/4/2019 1:09:13 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.36278
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 227
+==========User Study Data==========
+Seed: 1
+System error: 170216
+User error: 26
+Number success events: 47
+ 
+CURRENT TIME: 9/4/2019 1:31:08 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 61.65114
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 19
+==========User Study Data==========
+Seed: 1
+System error: 1858
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 1:31:30 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.36169
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 10
+==========User Study Data==========
+Seed: 1
+System error: 300
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 9/4/2019 1:38:59 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.00888
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.5
+Number of events: 77
+==========User Study Data==========
+Seed: 1
+System error: 50716
+User error: 8
+Number success events: 19
+ 
