@@ -22,6 +22,7 @@ public class Drone {
     public int eventId;
     public int eventNo;
     public int nextEvent = -2;
+    public float tripTime = 0;
 
     ////NEW
     //public static System.Random repark_rnd = new System.Random(1024);
@@ -46,7 +47,7 @@ public class Drone {
         
         this.droneId = droneId;
         this.parkingPos = this.curPos = initPos;
-        this.hoverPos = this.parkingPos + hoverShift;
+        //this.hoverPos = this.parkingPos + hoverShift;
         this.status = DroneStatus.PARKED;
         this.isCollided = false;
 
@@ -64,8 +65,10 @@ public class Drone {
 
     public void AddEvent(Event e)
     {
+        Debug.LogFormat("Drone {0} takeoff at position {1}", droneId, parkingPos);
         //Debug.Log("Drone " + droneId + " Event " + e.shelfId + " at " + e.pos);
         status = DroneStatus.TAKEOFF;
+        this.hoverPos = this.parkingPos + hoverShift;
         dstPos = hoverPos; 
         eventPos = e.pos;
         direction = Vector3.Normalize(dstPos - parkingPos);
