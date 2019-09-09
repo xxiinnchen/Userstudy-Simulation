@@ -65,7 +65,7 @@ public class Drone {
 
     public void AddEvent(Event e)
     {
-        Debug.LogFormat("Drone {0} takeoff at position {1}", droneId, parkingPos);
+        //Debug.LogFormat("Drone {0} takeoff at position {1}", droneId, parkingPos);
         //Debug.Log("Drone " + droneId + " Event " + e.shelfId + " at " + e.pos);
         status = DroneStatus.TAKEOFF;
         this.hoverPos = this.parkingPos + hoverShift;

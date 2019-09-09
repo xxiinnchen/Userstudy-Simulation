@@ -33,7 +33,7 @@ public class TrafficControl : MonoBehaviour
     public GameObject eventBaseObject;
 
     public static int numDrones = 30;
-    public float EVENT_INTERVAL = Utility.EVENT_INTERVALS[numDrones];
+    float EVENT_INTERVAL = Utility.EVENT_INTERVALS[numDrones];
     public int EXIT_TIME = 180;
     public float timeCounter = 0;
     public int MAX_SEED;
@@ -165,6 +165,22 @@ public class TrafficControl : MonoBehaviour
         } 
     }
 
+    //new init
+    /// <summary>
+    /// Initilize new drones with their positions given in flightplan.csv
+    /// </summary>
+    /// <param name="num"></param>
+    public void initDronesWithPath(int num)
+    {
+        for (int i = 0; i < num; i++)
+        {
+            int droneInitIndex = flightPlan[i][2] + flightPlan[i][3] * 10;
+            Drone newDrone = new Drone(i, parkinglot[droneInitIndex]);
+            dronesDict.Add(i, newDrone);
+            availableDronesId.Add(i);
+        }
+    }
+
     public void initEvent(int num)
     {
         for (int i = 0; i < num; i++)
@@ -173,6 +189,7 @@ public class TrafficControl : MonoBehaviour
             eventsDict.Add(i, newEvent);
         }
     }
+
 
 
     /// <summary>
@@ -225,7 +242,16 @@ public class TrafficControl : MonoBehaviour
 
         worldobject = this.gameObject;
         dronesDict = new Dictionary<int, Drone>();
-        initDrones(numDrones);
+
+        if (FlightPathProvided)
+        {
+            initDronesWithPath(numDrones);
+        } else
+        {
+
+            initDrones(numDrones);
+        }
+        
         initEvent(shelves.Length);
 
         //csv file header:
@@ -245,12 +271,6 @@ public class TrafficControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (minuteCounter >= 60)
-        {
-            minuteCounter = 0;
-            currMinCollisionCounter = 0;
-        }
-
         if (timeCounter - lastPrint > 1)
         {
             lastPrint = timeCounter;
@@ -288,7 +308,6 @@ public class TrafficControl : MonoBehaviour
                         //Debug.Log("Added Event: " + temp_values[0].ToString() + ":" + temp_values[1].ToString() + ":" + temp_values[2].ToString());
                         waitingEventsId_nexteventId_teleportId.Add(temp_values);
 
-                       // Debug.Log("eventID " + temp_values[0]);
                         flightPlanIndex++;
                         
                     }
@@ -339,14 +358,7 @@ public class TrafficControl : MonoBehaviour
 
                             availableDronesId.Remove(d);
 
-                            //new
-                            // modify drone starting position
-                            
-                            availableDrone.parkingPos = Utility.shelves[startingLaunchpadId];
                             availableDrone.eventId = shelfId;
-                            Debug.LogFormat("Drone ID: {0} position set to {1}", d, startingLaunchpadId);
-
-                            //new
 
                             //availableDrone.AddEvent(eventsDict[eventId]);
                             availableDrone.AddEvent(eventsDict[shelfId]);
@@ -385,7 +397,6 @@ public class TrafficControl : MonoBehaviour
 
                         availableDrone.parkingPos = Utility.shelves[startingLaunchpadId];
                         //availableDrone.curPos = Utility.shelves[startingLaunchpadId];
-                        Debug.LogFormat("Drone ID: {0} position set to {1}", d, startingLaunchpadId);
 
                         availableDrone.AddEvent(eventsDict[shelfId]);
                         availableDrone.eventNo = totalEventCounter;
@@ -399,7 +410,6 @@ public class TrafficControl : MonoBehaviour
                         waitingEventsId_nexteventId_teleportId.Remove(e);
                         ongoingEventsId.Add(eventId);
 
-                        Debug.Log("Event No: " + totalEventCounter.ToString() + " | Drone: " + d.ToString() + " at parking position " + startingLaunchpadId + " | Dest Event: " + shelfId.ToString() );
                         //Debug.Log("Drone " + d.ToString() + " respawn point changed to " + teleportId.ToString());
 
                         totalEventCounter++;
