@@ -211,12 +211,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f161cd55d8ec642079cbe75d4e00faf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FlightPathProvided: 1
   droneBaseObject: {fileID: 5791554476043166253, guid: fce03e028fdfa471698e6458dfa0e924,
     type: 3}
   eventBaseObject: {fileID: 3176900642811212333, guid: be94373cd6e80a5439b77e2535091660,
     type: 3}
-  EVENT_INTERVAL: 0.5
   EXIT_TIME: 180
+  timeCounter: 0
   MAX_SEED: 100
   systemError: 0
   userError: 0

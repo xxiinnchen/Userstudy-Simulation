@@ -8,6 +8,7 @@ public class Drone {
     public Vector3 parkingPos;
     public Vector3 hoverPos;
     public Vector3 eventPos;
+    public Vector3 spawnPos;
     public Vector3 curPos; //Current position of the drone
     public Vector3 dstPos; //current destination position
     public Vector3 direction; // Direction for drone to fly in
@@ -114,10 +115,9 @@ public class Drone {
             }
 
             else if (Utility.IsLessThan(dstPos - eventPos, epsilon)) // Drone reached the event
-            //else
             {
                 status = DroneStatus.PARKED;
-                curPos = parkingPos;
+                curPos = spawnPos;
                 flag = MoveStatus.END_TO_SHELF;
             }
         }

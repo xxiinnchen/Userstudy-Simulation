@@ -14,6 +14,7 @@ public class TrafficControl : MonoBehaviour
 {
 
     public bool FlightPathProvided = false;
+    public bool FlightDebug = false;
 
     public static string seed_filename = "Assets/Scripts/SEED.txt";
     public static StreamReader reader = new StreamReader(seed_filename);
@@ -43,7 +44,7 @@ public class TrafficControl : MonoBehaviour
     public static Dictionary<int, Event> eventsDict = new Dictionary<int, Event>();
 
     public OrderedSet<int> waitingEventsId = new OrderedSet<int>();
-    public OrderedSet<List<int>> waitingEventsId_nexteventId_teleportId = new OrderedSet<List<int>>();
+    public OrderedSet<List<int>> waitingEventsID_Flightplan = new OrderedSet<List<int>>();
     public HashSet<int> ongoingEventsId = new HashSet<int>();
 
     public OrderedSet<int> availableDronesId = new OrderedSet<int>();
@@ -141,6 +142,18 @@ public class TrafficControl : MonoBehaviour
         reader.Close();
     
         return numVal;
+    }
+
+
+    public void printEvents(Drone availableDrone)
+    {
+        int tempStartingIndex = Array.IndexOf(Utility.parking, availableDrone.parkingPos);
+        int tempTeleportIndex = Array.IndexOf(Utility.parking, availableDrone.spawnPos);
+        int tempCurrEventNo = availableDrone.eventNo;
+        int tempNextEvent = availableDrone.nextEvent;
+        int tempCurrEventID = availableDrone.eventId;
+
+        Debug.LogFormat("{0} : Drone {1} starting from {2} fly to {3} Spawning at {4} Next event {5}", tempCurrEventNo, availableDrone.droneId, tempStartingIndex, tempCurrEventID, tempTeleportIndex, tempNextEvent);
     }
 
     public int GenRandEvent()
@@ -255,6 +268,7 @@ public class TrafficControl : MonoBehaviour
         initEvent(shelves.Length);
 
         //csv file header:
+        /*
         string[] csvHeaderRow = new string[7];
         csvHeaderRow[0] = "Event No A";
         csvHeaderRow[1] = "Drone A"  ;
@@ -265,7 +279,7 @@ public class TrafficControl : MonoBehaviour
         csvHeaderRow[6] = "Time"     ;
 
         rowData.Add(csvHeaderRow);
-
+        */
     }
 
     // Update is called once per frame
@@ -283,7 +297,7 @@ public class TrafficControl : MonoBehaviour
             eventTimer = 0;
             //Debug.Log("New Event Attempt");
 
-            if ( (waitingEventsId.Count + ongoingEventsId.Count < shelves.Length - 1) || (waitingEventsId_nexteventId_teleportId.Count + ongoingEventsId.Count < shelves.Length - 1) )
+            if ( (waitingEventsId.Count + ongoingEventsId.Count < shelves.Length - 1) || (waitingEventsID_Flightplan.Count + ongoingEventsId.Count < shelves.Length - 1) )
             {
                 //  Debug.Log("New Event Created");
 
@@ -306,7 +320,7 @@ public class TrafficControl : MonoBehaviour
 
                         //Debug.Log("Check 3");
                         //Debug.Log("Added Event: " + temp_values[0].ToString() + ":" + temp_values[1].ToString() + ":" + temp_values[2].ToString());
-                        waitingEventsId_nexteventId_teleportId.Add(temp_values);
+                        waitingEventsID_Flightplan.Add(temp_values);
 
                         flightPlanIndex++;
                         
@@ -327,7 +341,7 @@ public class TrafficControl : MonoBehaviour
             }
         }
 
-        if (availableDronesId.Count > 0 && (waitingEventsId.Count > 0 || waitingEventsId_nexteventId_teleportId.Count > 0 ))
+        if (availableDronesId.Count > 0 && (waitingEventsId.Count > 0 || waitingEventsID_Flightplan.Count > 0 ))
         {
 
             if (FlightPathProvided)
@@ -335,7 +349,7 @@ public class TrafficControl : MonoBehaviour
                 try
                 {
                     //new
-                    List<int> e = waitingEventsId_nexteventId_teleportId.Next();
+                    List<int> e = waitingEventsID_Flightplan.Next();
                     int eventId = e[0];
                     int droneId = e[1];
                     int startingLaunchpadId = e[2];
@@ -356,7 +370,7 @@ public class TrafficControl : MonoBehaviour
                         {
                             //Debug.Log("Check 5.a");
 
-                            availableDronesId.Remove(d);
+                            //availableDronesId.Remove(d);
 
                             availableDrone.eventId = shelfId;
 
@@ -370,8 +384,8 @@ public class TrafficControl : MonoBehaviour
 
                             availableDronesId.Remove(d);
                             workingDronesId.Add(d);
-                            waitingEventsId_nexteventId_teleportId.Remove(e);
-                            ongoingEventsId.Add(eventId);
+                            waitingEventsID_Flightplan.Remove(e);
+                            ongoingEventsId.Add(eventId); 
 
                             //Debug.Log("OPTIMIZED ASSIGNMENT");
                             //Debug.Log("OP | Event No: " + totalEventCounter.ToString() + " | Drone: " + d.ToString() + " | Dest Event: " + eventId.ToString() );
@@ -380,6 +394,9 @@ public class TrafficControl : MonoBehaviour
                             totalEventCounter++;
 
                             droneFound = true;
+
+                            printEvents(availableDrone);
+
                         }
 
                         if (droneFound)
@@ -388,31 +405,58 @@ public class TrafficControl : MonoBehaviour
                         }
                     }
 
+
+                    // For the first 30 events.
+
                     if (!droneFound && totalEventCounter<numDrones)
                     {
                         //Debug.Log("Check 5.b");
+                        //Debug.Log(totalEventCounter);
 
                         int d = availableDronesId.Next();
                         Drone availableDrone = dronesDict[d];
+                        //Debug.Log("drone: " + d.ToString());
 
-                        availableDrone.parkingPos = Utility.shelves[startingLaunchpadId];
+                        //availableDrone.parkingPos = Utility.shelves[startingLaunchpadId];
                         //availableDrone.curPos = Utility.shelves[startingLaunchpadId];
+
+                        //Debug.Log("direction: "+ availableDrone.direction);
+                        //Debug.Log("currpos " + availableDrone.parkingPos);
+                        //Debug.Log("hoverPos " + availableDrone.hoverPos);
 
                         availableDrone.AddEvent(eventsDict[shelfId]);
                         availableDrone.eventNo = totalEventCounter;
                         availableDrone.nextEvent = nextEventId;
+                        availableDrone.spawnPos = Utility.parking[teleportId];
 
-                        availableDrone.parkingPos = Utility.parking[teleportId];
+                        // THIS HAS TO BE IT
+                        //Debug.Log("Event assigned");
+                        //Debug.Log("direction: " + availableDrone.direction);
+                        //Debug.Log("currpos " + availableDrone.parkingPos);
+                        //Debug.Log("hoverPos" + availableDrone.hoverPos);
+
+                        //availableDrone.parkingPos = Utility.parking[teleportId];
                         //availableDrone.hoverPos = availableDrone.parkingPos + availableDrone.hoverShift;
+
+
+                        //Debug.Log("Update parking pos");
+                        //Debug.Log("direction: " + availableDrone.direction);
+                        //Debug.Log("currpos " + availableDrone.parkingPos);
+                        //Debug.Log("hoverPos" + availableDrone.hoverPos);
+
+                        //Debug.Log("drone: " + d.ToString());
 
                         availableDronesId.Remove(d);
                         workingDronesId.Add(d);
-                        waitingEventsId_nexteventId_teleportId.Remove(e);
+                        waitingEventsID_Flightplan.Remove(e);
                         ongoingEventsId.Add(eventId);
 
                         //Debug.Log("Drone " + d.ToString() + " respawn point changed to " + teleportId.ToString());
 
                         totalEventCounter++;
+
+                        printEvents(availableDrone);
+
                     }
                 }
                 catch (ArgumentOutOfRangeException err)
@@ -467,7 +511,13 @@ public class TrafficControl : MonoBehaviour
                         if (!droneA.isCollided && !droneB.isCollided)
                         {
                             userError++;
-                            Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  =====", i, j);
+
+                            if (FlightDebug)
+                            {
+                                Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  =====", i, j);
+                            }
+
+                            /*
                             string [] rowDataTemp = new String[7];
                             rowDataTemp[0] = droneA.eventNo.ToString();
                             rowDataTemp[1] = droneA.droneId.ToString();
@@ -477,6 +527,7 @@ public class TrafficControl : MonoBehaviour
                             rowDataTemp[5] = droneB.eventId.ToString();
                             rowDataTemp[6] = timeCounter.ToString();                       
                             rowData.Add(rowDataTemp);
+                            */
                         }
 
                         droneA.isCollided = true;
@@ -489,7 +540,12 @@ public class TrafficControl : MonoBehaviour
                 }
 
             }
+
+            //Debug.Log("TEST");
+            //Debug.Log(droneA.direction);
             droneA.direction = Vector3.Normalize(droneA.dstPos - droneA.curPos);
+            //Debug.Log(droneA.direction);
+            //Debug.Log("TEST");
         }
 
 
@@ -516,10 +572,17 @@ public class TrafficControl : MonoBehaviour
                 if (!currDrone.isCollided)
                 {
                     successEventCounter++;
-                    Debug.LogFormat("Drone {0} | event {1} | COMPLETE, trip time: {2}", i, currDrone.eventId, currDrone.tripTime);
+                    if (FlightDebug)
+                    {
+                        Debug.LogFormat("Drone {0} | event {1} | COMPLETE, trip time: {2}", i, currDrone.eventId, currDrone.tripTime);
+                    }
+
                 } else
                 {
-                    Debug.LogFormat("Drone {0} event {1} | CRASH, trip time: {2}", i, currDrone.eventId, currDrone.tripTime);
+                    if (FlightDebug)
+                    {
+                        Debug.LogFormat("Drone {0} event {1} | CRASH, trip time: {2}", i, currDrone.eventId, currDrone.tripTime);
+                    }
                 }
                 currDrone.tripTime = 0;
             }
