@@ -212,6 +212,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FlightPathProvided: 1
+  FlightDebug: 0
+  FlightPlanDebug: 1
   droneBaseObject: {fileID: 5791554476043166253, guid: fce03e028fdfa471698e6458dfa0e924,
     type: 3}
   eventBaseObject: {fileID: 3176900642811212333, guid: be94373cd6e80a5439b77e2535091660,
