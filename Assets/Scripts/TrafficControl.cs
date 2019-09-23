@@ -15,6 +15,7 @@ public class TrafficControl : MonoBehaviour
 
     public bool FlightPathProvided = false;
     public bool FlightDebug = false;
+    public bool FlightPlanDebug = false;
 
     public static string seed_filename = "Assets/Scripts/SEED.txt";
     public static StreamReader reader = new StreamReader(seed_filename);
@@ -378,6 +379,7 @@ public class TrafficControl : MonoBehaviour
                             availableDrone.AddEvent(eventsDict[shelfId]);
                             availableDrone.eventNo = totalEventCounter;
                             availableDrone.nextEvent = nextEventId;
+                            availableDrone.spawnPos = Utility.parking[teleportId];
 
                             //availableDrone.parkingPos = Utility.parking[teleportId];
                             //availableDrone.hoverPos = availableDrone.parkingPos + availableDrone.hoverShift;
@@ -395,8 +397,10 @@ public class TrafficControl : MonoBehaviour
 
                             droneFound = true;
 
-                            printEvents(availableDrone);
-
+                            if (FlightPlanDebug)
+                            {
+                                printEvents(availableDrone);
+                            }
                         }
 
                         if (droneFound)
@@ -455,7 +459,10 @@ public class TrafficControl : MonoBehaviour
 
                         totalEventCounter++;
 
-                        printEvents(availableDrone);
+                        if (FlightPlanDebug)
+                        {
+                            printEvents(availableDrone);
+                        }
 
                     }
                 }

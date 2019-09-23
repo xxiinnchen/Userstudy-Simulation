@@ -47,7 +47,8 @@ public class Drone {
     {
         
         this.droneId = droneId;
-        this.parkingPos = this.curPos = initPos;
+        this.parkingPos = initPos;
+        this.curPos = initPos;
         //this.hoverPos = this.parkingPos + hoverShift;
         this.status = DroneStatus.PARKED;
         this.isCollided = false;
@@ -117,7 +118,9 @@ public class Drone {
             else if (Utility.IsLessThan(dstPos - eventPos, epsilon)) // Drone reached the event
             {
                 status = DroneStatus.PARKED;
-                curPos = spawnPos;
+                parkingPos = spawnPos;
+                curPos = parkingPos;
+                hoverPos = parkingPos + hoverShift;
                 flag = MoveStatus.END_TO_SHELF;
             }
         }

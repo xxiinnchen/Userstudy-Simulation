@@ -1753,3 +1753,93 @@ System error: 199274
 User error: 20
 Number success events: 17
  
+CURRENT TIME: 9/22/2019 11:53:28 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 62.40873
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.3333333
+Number of events: 60
+==========User Study Data==========
+Seed: 1
+System error: 74618
+User error: 8
+Number success events: 8
+ 
+CURRENT TIME: 9/22/2019 11:58:51 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.34639
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.3333333
+Number of events: 48
+==========User Study Data==========
+Seed: 1
+System error: 45706
+User error: 7
+Number success events: 6
+ 
+CURRENT TIME: 9/23/2019 12:03:49 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 43.97982
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.3333333
+Number of events: 91
+==========User Study Data==========
+Seed: 1
+System error: 88810
+User error: 11
+Number success events: 13
+ 
+CURRENT TIME: 9/23/2019 12:11:49 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 51.22033
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.3333333
+Number of events: 62
+==========User Study Data==========
+Seed: 1
+System error: 67706
+User error: 7
+Number success events: 8
+ 
+CURRENT TIME: 9/23/2019 12:15:13 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 51.20564
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.3333333
+Number of events: 121
+==========User Study Data==========
+Seed: 1
+System error: 123868
+User error: 15
+Number success events: 32
+ 
+CURRENT TIME: 9/23/2019 12:24:36 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 56.66043
+Drone speed: 0.018
+Number of drones: 30
+Average time: 0
+Event interval: 0.3333333
+Number of events: 60
+==========User Study Data==========
+Seed: 1
+System error: 65166
+User error: 7
+Number success events: 6
+ 
