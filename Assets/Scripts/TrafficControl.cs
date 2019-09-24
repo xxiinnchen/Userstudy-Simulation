@@ -14,7 +14,8 @@ public class TrafficControl : MonoBehaviour
 {
 
     public bool FlightPathProvided = false;
-    public bool FlightDebug = false;
+    public bool FlightDebugTrip = false;
+    public bool FlightDebugCol = false;
     public bool FlightPlanDebug = false;
 
     public static string seed_filename = "Assets/Scripts/SEED.txt";
@@ -519,9 +520,9 @@ public class TrafficControl : MonoBehaviour
                         {
                             userError++;
 
-                            if (FlightDebug)
+                            if (FlightDebugCol)
                             {
-                                Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  =====", i, j);
+                                Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  at POS {2}, {3}  =====", i, j, droneA.curPos, droneB.curPos);
                             }
 
                             /*
@@ -579,14 +580,14 @@ public class TrafficControl : MonoBehaviour
                 if (!currDrone.isCollided)
                 {
                     successEventCounter++;
-                    if (FlightDebug)
+                    if (FlightDebugTrip)
                     {
                         Debug.LogFormat("Drone {0} | event {1} | COMPLETE, trip time: {2}", i, currDrone.eventId, currDrone.tripTime);
                     }
 
                 } else
                 {
-                    if (FlightDebug)
+                    if (FlightDebugTrip)
                     {
                         Debug.LogFormat("Drone {0} event {1} | CRASH, trip time: {2}", i, currDrone.eventId, currDrone.tripTime);
                     }
