@@ -23,7 +23,7 @@ public class TrafficControl : MonoBehaviour
     static string seed_string = reader.ReadLine();
     public static int SEED = strToInt(seed_string);
 
-    public static string csv_filename = "Assets/Log/flightplan.csv";
+    public static string csv_filename = "Assets/Log/flightplan10DroneCrashPos.csv";
     public static StreamReader csv_reader = new StreamReader(csv_filename);
     public static List<List<int>> flightPlan = new List<List<int>>();
     public static int flightPlanIndex = 0;
@@ -35,7 +35,7 @@ public class TrafficControl : MonoBehaviour
     public GameObject droneBaseObject;
     public GameObject eventBaseObject;
 
-    public static int numDrones = 30;
+    public static int numDrones = 10;
     float EVENT_INTERVAL = Utility.EVENT_INTERVALS[numDrones];
     public int EXIT_TIME = 180;
     public float timeCounter = 0;
@@ -92,8 +92,16 @@ public class TrafficControl : MonoBehaviour
 
                 foreach (string value in values)
                 {
-                    int value_int = strToInt(value);
-                    values_int.Add(value_int);
+                    try {
+                        int value_int = strToInt(value);
+                        values_int.Add(value_int);
+                    }
+                    catch (FormatException e)
+                    {
+                        continue;
+                    }
+                   
+                    
                 }
                 flightPlan.Add(values_int);
             }
@@ -518,11 +526,13 @@ public class TrafficControl : MonoBehaviour
                         //Debug.Log("2. DroneID " + droneA.droneId + " Drone Collision");
                         if (!droneA.isCollided && !droneB.isCollided)
                         {
+                            droneA.gameObjectPointer.SetActive(false);
+                            droneB.gameObjectPointer.SetActive(false);
                             userError++;
 
                             if (FlightDebugCol)
                             {
-                                Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  at POS {2}, {3}  =====", i, j, droneA.curPos, droneB.curPos);
+                                Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  at POS {2}, {3}  | Status {4}, {5} =====", i, j, droneA.curPos.ToString("F2"), droneB.curPos,ToString(), droneA.status, droneB.status);
                             }
 
                             /*
@@ -572,7 +582,6 @@ public class TrafficControl : MonoBehaviour
             }
 
             Drone.MoveStatus moveStatus = currDrone.Move();
-
 
             if (moveStatus == Drone.MoveStatus.END_TO_SHELF)  // drone status 2 --> 3
             {
