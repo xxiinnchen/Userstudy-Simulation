@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Drone {
 
@@ -62,8 +63,8 @@ public class Drone {
         gameObjectPointer.layer = 2;
         gameObjectPointer.transform.parent = TrafficControl.worldobject.transform;
 
-
     }
+
 
     public void AddEvent(Event e)
     {
