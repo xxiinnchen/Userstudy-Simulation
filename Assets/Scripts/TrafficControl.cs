@@ -22,8 +22,9 @@ public class TrafficControl : MonoBehaviour
     public static StreamReader reader = new StreamReader(seed_filename);
     static string seed_string = reader.ReadLine();
     public static int SEED = strToInt(seed_string);
+    public static bool use_seedfind = false;
 
-    public static string csv_filename = "Assets/Log/flightplan10DroneCrashPos.csv";
+    public static string csv_filename = "Assets/Log/flightplan/flightplan19_3.csv";
     public static StreamReader csv_reader = new StreamReader(csv_filename);
     public static List<List<int>> flightPlan = new List<List<int>>();
     public static int flightPlanIndex = 0;
@@ -388,7 +389,9 @@ public class TrafficControl : MonoBehaviour
                             availableDrone.AddEvent(eventsDict[shelfId]);
                             availableDrone.eventNo = totalEventCounter;
                             availableDrone.nextEvent = nextEventId;
-                            availableDrone.spawnPos = Utility.parking[teleportId];
+
+                            if (teleportId>0) 
+                                 availableDrone.spawnPos = Utility.parking[teleportId];
 
                             //availableDrone.parkingPos = Utility.parking[teleportId];
                             //availableDrone.hoverPos = availableDrone.parkingPos + availableDrone.hoverShift;
@@ -526,8 +529,8 @@ public class TrafficControl : MonoBehaviour
                         //Debug.Log("2. DroneID " + droneA.droneId + " Drone Collision");
                         if (!droneA.isCollided && !droneB.isCollided)
                         {
-                            droneA.gameObjectPointer.SetActive(false);
-                            droneB.gameObjectPointer.SetActive(false);
+                            //droneA.gameObjectPointer.SetActive(false);
+                            //droneB.gameObjectPointer.SetActive(false);
                             userError++;
 
                             if (FlightDebugCol)
@@ -631,13 +634,12 @@ public class TrafficControl : MonoBehaviour
             if (timeCounter >= EXIT_TIME)
             {
                 Debug.Log("====================End of a 3 minute user study=============================");
+                Debug.LogFormat("User Error: {0}", userError);
                 //Debug.Log(SEED);
-                ResetSim();
+               // ResetSim();
+               // ReloadScene();
                 
-                ReloadScene();
-                
-
-                //QuitGame();
+                QuitGame();
             }
         } else
         {
