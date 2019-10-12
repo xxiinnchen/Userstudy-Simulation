@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using System;
+using System.IO;
+using System.Text;
+using TMPro;
 
 public class Drone {
 
@@ -56,12 +59,24 @@ public class Drone {
 
         // create game object
         GameObject baseObject = TrafficControl.worldobject.GetComponent<TrafficControl>().droneBaseObject;
-        gameObjectPointer = Object.Instantiate(baseObject, initPos, Quaternion.identity);
+        gameObjectPointer = UnityEngine.Object.Instantiate(baseObject, initPos, Quaternion.identity);
         gameObjectPointer.GetComponent<DroneProperties>().classPointer = this;
 
         gameObjectPointer.name = string.Concat("Drone", droneId.ToString());
         gameObjectPointer.layer = 2;
         gameObjectPointer.transform.parent = TrafficControl.worldobject.transform;
+
+        try
+        {
+            GameObject textHelperChild = this.gameObjectPointer.transform.Find("Text Helper").gameObject;
+            TextMeshPro textHelper = textHelperChild.GetComponent<TextMeshPro>();
+            textHelper.SetText(this.droneId.ToString());
+        }
+        catch (NullReferenceException e)
+        {
+            Debug.Log(e);
+            Debug.Log("Shit");
+        }
 
     }
 
@@ -123,6 +138,11 @@ public class Drone {
                 curPos = parkingPos;
                 hoverPos = parkingPos + hoverShift;
                 flag = MoveStatus.END_TO_SHELF;
+
+
+                GameObject textHelperChild = this.gameObjectPointer.transform.Find("Text Helper").gameObject;
+                TextMeshPro textHelper = textHelperChild.GetComponent<TextMeshPro>();
+                textHelper.color = Color.white;
             }
         }
         gameObjectPointer.transform.position = curPos;
