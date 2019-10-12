@@ -1123,3 +1123,138 @@ System error: 0
 User error: 0
 Number success events: 0
  
+CURRENT TIME: 10/11/2019 10:35:33 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.81963
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 70
+==========User Study Data==========
+Seed: 57
+System error: 21478
+User error: 8
+Number success events: 25
+ 
+CURRENT TIME: 10/11/2019 11:26:09 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 60.19769
+Drone speed: 0.016
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 60
+==========User Study Data==========
+Seed: 57
+System error: 17266
+User error: 9
+Number success events: 16
+ 
+CURRENT TIME: 10/11/2019 11:40:57 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 63.92635
+Drone speed: 0.016
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 63
+==========User Study Data==========
+Seed: 57
+System error: 13842
+User error: 7
+Number success events: 30
+ 
+CURRENT TIME: 10/11/2019 11:48:41 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 57.80025
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 70
+==========User Study Data==========
+Seed: 57
+System error: 14250
+User error: 8
+Number success events: 34
+ 
+CURRENT TIME: 10/11/2019 11:52:45 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 57.79667
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 69
+==========User Study Data==========
+Seed: 57
+System error: 20072
+User error: 6
+Number success events: 36
+ 
+CURRENT TIME: 10/11/2019 11:56:01 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 59.62307
+Drone speed: 0.016
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 61
+==========User Study Data==========
+Seed: 57
+System error: 17232
+User error: 6
+Number success events: 23
+ 
+CURRENT TIME: 10/11/2019 11:57:07 PM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 10
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 0
+==========User Study Data==========
+Seed: 57
+System error: 0
+User error: 0
+Number success events: 0
+ 
+CURRENT TIME: 10/12/2019 12:00:11 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 58.68211
+Drone speed: 0.018
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 70
+==========User Study Data==========
+Seed: 57
+System error: 16690
+User error: 7
+Number success events: 33
+ 
+CURRENT TIME: 10/12/2019 12:02:48 AM
+==========Basic Parameters==========
+Interface SampleScene
+FPS: 61.67913
+Drone speed: 0.016
+Number of drones: 10
+Average time: 0
+Event interval: 1
+Number of events: 50
+==========User Study Data==========
+Seed: 57
+System error: 14650
+User error: 4
+Number success events: 22
+ 

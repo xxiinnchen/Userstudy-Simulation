@@ -26,7 +26,7 @@ public class TrafficControl : MonoBehaviour
     public static int SEED = strToInt(seed_string);
     public static bool use_seedfind = false;
 
-    public static string csv_filename = "Assets/Log/flightplan/17 collisions/flightplan20_4_C_17.csv";
+    public static string csv_filename = "Assets/Log/flightplan/flightplan 1.csv";
     public static StreamReader csv_reader = new StreamReader(csv_filename);
     public static List<List<int>> flightPlan = new List<List<int>>();
     public static int flightPlanIndex = 0;
