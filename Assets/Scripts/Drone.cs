@@ -153,4 +153,30 @@ public class Drone {
         return flag;
     }
 
+    public void TriggerCollision(Collider other)
+    {
+
+
+        try
+        {
+            GameObject droneB_gameObject = GameObject.Find(other.gameObject.name);
+            DroneProperties droneB_droneProperties = droneB_gameObject.GetComponent<DroneProperties>();
+            Drone droneB = droneB_droneProperties.classPointer;
+
+            if (droneB.droneId == collionDroneId)
+            {
+                GameObject droneA_textHelperChild = this.gameObjectPointer.transform.Find("Text Helper").gameObject;
+                TextMeshPro droneA_textHelper = droneA_textHelperChild.GetComponent<TextMeshPro>();
+                droneA_textHelper.color = Color.red;
+                Debug.LogFormat("Collision for {0} and {1}", droneId, droneB.droneId);
+                TrafficControl.worldobject.GetComponent<TrafficControl>().userErrorColliders+= 0.5f;
+            }
+        }
+        catch (NullReferenceException)
+        {
+            Debug.LogFormat("Unable to find {0}", other.name);
+        }
+
+    }
+
 }

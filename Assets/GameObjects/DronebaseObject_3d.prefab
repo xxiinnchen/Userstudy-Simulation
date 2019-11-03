@@ -4289,13 +4289,14 @@ GameObject:
   - component: {fileID: 2645619204935169986}
   - component: {fileID: 4339548852310629879}
   - component: {fileID: 6505773333928636649}
-  - component: {fileID: 4701488583271250086}
   - component: {fileID: 6156981426822242384}
   - component: {fileID: 5460258077505645593}
   - component: {fileID: 3315169231839938687}
+  - component: {fileID: 2125332652701766529}
+  - component: {fileID: 7162307439011668085}
   m_Layer: 0
   m_Name: DronebaseObject_3d
-  m_TagString: Untagged
+  m_TagString: drone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4372,19 +4373,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a539bda7b162f4cfca022c59cffb1e1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!65 &4701488583271250086
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5791554476043166253}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.2, z: 0.2}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &6156981426822242384
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4438,6 +4426,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5791554476043166253}
   m_CullTransparentMesh: 0
+--- !u!135 &2125332652701766529
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5791554476043166253}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.1
+  m_Center: {x: -0.0047822385, y: 0.035572026, z: -0.015412591}
+--- !u!54 &7162307439011668085
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5791554476043166253}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &5818906015082441282
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,4 +13,11 @@ public class DroneProperties : MonoBehaviour
         classPointer.SPEED = Utility.DRONE_SPEED;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "drone")
+        {
+            classPointer.TriggerCollision(other);
+        }
+    }
 }

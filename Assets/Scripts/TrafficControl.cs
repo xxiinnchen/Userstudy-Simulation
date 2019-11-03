@@ -21,6 +21,8 @@ public class TrafficControl : MonoBehaviour
     public bool ForceCSV_Time = false;
     public bool OriginalCSV = true;
 
+    public bool Colliders = false;
+
     public bool FlightDebugTrip = false;
     public bool FlightDebugCol = false;
     public bool FlightPlanDebug = false;
@@ -69,6 +71,7 @@ public class TrafficControl : MonoBehaviour
     // User Data variables
     public int systemError = 0;
     public int userError = 0;
+    public float userErrorColliders = 0;
     //public float timeCounter = 0;
     private float eventTimer = 0;
     private float lastPrint = 0;
@@ -292,6 +295,7 @@ public class TrafficControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+
         if (timeCounter - lastPrint > 1)
         {
             lastPrint = timeCounter;
@@ -320,11 +324,12 @@ public class TrafficControl : MonoBehaviour
                         flightPlanIndex++;
                         
                     }
-                    catch (ArgumentOutOfRangeException err)
+                    catch (ArgumentOutOfRangeException)
                     {
-                        Debug.Log("### 1.INVALID EVENT." + err);
-                        Debug.Log("flightPlanIndex" + flightPlanIndex.ToString());
-                        Debug.Log("flightPlan" + flightPlan.Count.ToString());
+                        Debug.Log("CSV Reading complete");
+                        //Debug.Log("### 1.INVALID EVENT." + err);
+                        //Debug.Log("flightPlanIndex" + flightPlanIndex.ToString());
+                        //Debug.Log("flightPlan" + flightPlan.Count.ToString());
 
                     }
                 }
@@ -356,15 +361,14 @@ public class TrafficControl : MonoBehaviour
                     bool droneFound = false;
                     //new
                 
-
-                    //Debug.Log("Check 4");
-
                     foreach (Drone availableDrone in dronesDict.Values)
                     {
                         int d = availableDrone.droneId;
 
                         if (availableDrone.nextEvent == totalEventCounter && availableDronesId.Contains(d))
                         {
+
+                            Debug.LogFormat("Assigning event {0} to drone {1}", e.eventID, availableDrone.droneId);
 
                             availableDrone.eventId = shelfId;
 
@@ -400,13 +404,16 @@ public class TrafficControl : MonoBehaviour
                     }
 
 
-                    // For the first 30 events.
+                    // For the first numDrone events.
 
                     if (!droneFound && totalEventCounter<numDrones)
                     {
 
+
                         int d = availableDronesId.Next();
                         Drone availableDrone = dronesDict[d];
+
+                        Debug.LogFormat("Assigning event {0} to drone {1}", e.eventID, availableDrone.droneId);
 
                         availableDrone.AddEvent(eventsDict[shelfId]);
                         availableDrone.eventNo = totalEventCounter;
@@ -459,6 +466,12 @@ public class TrafficControl : MonoBehaviour
         foreach (int i in workingDronesId)
         {
             Drone droneA = dronesDict[i];
+
+            if(droneA.droneId == 0)
+            {
+                Debug.Log("applying force");
+            }
+
             droneA.direction = Vector3.Normalize(droneA.dstPos - droneA.curPos);
 
 
@@ -597,7 +610,7 @@ public class TrafficControl : MonoBehaviour
                 Drone droneB = dronesDict[droneA.collionDroneId];
                 float collisionTime = droneA.collidesAtTime;
 
-                Debug.LogFormat("Check Drone {0} and Drone {1} at CSV time {2}", droneA.droneId, droneB.droneId, collisionTime);
+                //Debug.LogFormat("Check Drone {0} and Drone {1} at CSV time {2}", droneA.droneId, droneB.droneId, collisionTime);
 
                 //Check that the user has not prevented the collision
                 if( !droneA.safe && !droneB.safe)
@@ -633,9 +646,10 @@ public class TrafficControl : MonoBehaviour
                 }
             }
 
-            //Debug.Log("TEST");
-            //Debug.Log(droneA.direction);
-            //Debug.Log("TEST");
+            if (Colliders)
+            {
+                continue;
+            }
         }
 
 
