@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.49641287, b: 0.5748173, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -215,6 +215,7 @@ MonoBehaviour:
   FlightDebugTrip: 0
   FlightDebugCol: 1
   FlightPlanDebug: 0
+  ForceFollowCSV: 1
   droneBaseObject: {fileID: 5791554476043166253, guid: fce03e028fdfa471698e6458dfa0e924,
     type: 3}
   eventBaseObject: {fileID: 3176900642811212333, guid: be94373cd6e80a5439b77e2535091660,

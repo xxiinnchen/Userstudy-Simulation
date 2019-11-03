@@ -26,8 +26,11 @@ public class Drone {
     public int droneId;
     public int eventId;
     public int eventNo;
+    public int collionDroneId = -2;
     public int nextEvent = -2;
     public float tripTime = 0;
+    public bool safe = false;
+    public float collidesAtTime;
 
     ////NEW
     //public static System.Random repark_rnd = new System.Random(1024);
