@@ -213,8 +213,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FlightPathProvided: 1
   ForceCSV_CollisionBound: 0
-  ForceCSV_Time: 1
-  OriginalCSV: 0
+  ForceCSV_Time: 0
+  OriginalCSV: 1
+  Colliders: 1
   FlightDebugTrip: 0
   FlightDebugCol: 1
   FlightPlanDebug: 0
@@ -227,6 +228,7 @@ MonoBehaviour:
   MAX_SEED: 100
   systemError: 0
   userError: 0
+  userErrorColliders: 0
 --- !u!114 &357444812
 MonoBehaviour:
   m_ObjectHideFlags: 0

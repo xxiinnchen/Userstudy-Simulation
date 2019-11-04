@@ -168,7 +168,7 @@ public class Drone {
                 GameObject droneA_textHelperChild = this.gameObjectPointer.transform.Find("Text Helper").gameObject;
                 TextMeshPro droneA_textHelper = droneA_textHelperChild.GetComponent<TextMeshPro>();
                 droneA_textHelper.color = Color.red;
-                Debug.LogFormat("Collision for {0} and {1}", droneId, droneB.droneId);
+                //Debug.LogFormat("Collision for {0} and {1}", droneId, droneB.droneId);
                 TrafficControl.worldobject.GetComponent<TrafficControl>().userErrorColliders+= 0.5f;
             }
         }
