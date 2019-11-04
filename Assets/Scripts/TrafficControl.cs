@@ -19,6 +19,7 @@ public class TrafficControl : MonoBehaviour
     public bool FlightDebugTrip = false;
     public bool FlightDebugCol = false;
     public bool FlightPlanDebug = false;
+    public bool ForceFollowCSV = false;
 
     public static string seed_filename = "Assets/Scripts/SEED.txt";
     public static StreamReader reader = new StreamReader(seed_filename);
@@ -26,7 +27,7 @@ public class TrafficControl : MonoBehaviour
     public static int SEED = strToInt(seed_string);
     public static bool use_seedfind = false;
 
-    public static string csv_filename = "Assets/Log/flightplan/flightplan 1.csv";
+    public static string csv_filename = "Assets/flightplan18_0.csv";
     public static StreamReader csv_reader = new StreamReader(csv_filename);
     public static List<List<int>> flightPlan = new List<List<int>>();
     public static int flightPlanIndex = 0;
@@ -47,6 +48,7 @@ public class TrafficControl : MonoBehaviour
     // Drone and Event Dictionaries 
     public static Dictionary<int, Drone> dronesDict = new Dictionary<int, Drone>();
     public static Dictionary<int, Event> eventsDict = new Dictionary<int, Event>();
+    public static Dictionary<int, float> eventColTimeDict = new Dictionary<int, float>();
 
     public OrderedSet<int> waitingEventsId = new OrderedSet<int>();
     public OrderedSet<List<int>> waitingEventsID_Flightplan = new OrderedSet<List<int>>();
@@ -101,6 +103,7 @@ public class TrafficControl : MonoBehaviour
                     }
                     catch (FormatException e)
                     {
+                        values_int.Add(-3);
                         continue;
                     }
                    
@@ -320,7 +323,7 @@ public class TrafficControl : MonoBehaviour
                     {
                         //Debug.Log("Check 1");
                         List<int> currentRow = flightPlan[flightPlanIndex];
-                        List<int> temp_values = new List<int> { 0, 0, 0, 0, 0, 0 };
+                        List<int> temp_values = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0, 0, 0, 0, 0 ,0 };
 
 
                         //Debug.Log("Check 2");
@@ -330,6 +333,10 @@ public class TrafficControl : MonoBehaviour
                         temp_values[3] = currentRow[4] + 10 * currentRow[5];          // shelfIndexX + shelfIndexY*10
                         temp_values[4] = currentRow[6];                             // followedBy
                         temp_values[5] = currentRow[7] + 10 * currentRow[8];        // teleportToLaunchPadIndexX + teleportToLaunchPadIndexY*10
+                        temp_values[6] = currentRow[9];  //collideswithNum
+
+                        //Debug.Log(currentRow[11]);
+                        //eventColTimeDict.Add(currentRow[0], currentRow[11]);
 
                         //Debug.Log("Check 3");
                         //Debug.Log("Added Event: " + temp_values[0].ToString() + ":" + temp_values[1].ToString() + ":" + temp_values[2].ToString());
@@ -369,6 +376,7 @@ public class TrafficControl : MonoBehaviour
                     int shelfId = e[3];
                     int nextEventId = e[4];
                     int teleportId = e[5];
+                    int collisionDroneId = e[6];
                     bool droneFound = false;
                     //new
                 
@@ -381,31 +389,21 @@ public class TrafficControl : MonoBehaviour
 
                         if (availableDrone.nextEvent == totalEventCounter && availableDronesId.Contains(d))
                         {
-                            //Debug.Log("Check 5.a");
-
-                            //availableDronesId.Remove(d);
 
                             availableDrone.eventId = shelfId;
 
-                            //availableDrone.AddEvent(eventsDict[eventId]);
                             availableDrone.AddEvent(eventsDict[shelfId]);
                             availableDrone.eventNo = totalEventCounter;
                             availableDrone.nextEvent = nextEventId;
+                            availableDrone.collionDroneId = collisionDroneId;
 
                             if (teleportId>0) 
                                  availableDrone.spawnPos = Utility.parking[teleportId];
-
-                            //availableDrone.parkingPos = Utility.parking[teleportId];
-                            //availableDrone.hoverPos = availableDrone.parkingPos + availableDrone.hoverShift;
 
                             availableDronesId.Remove(d);
                             workingDronesId.Add(d);
                             waitingEventsID_Flightplan.Remove(e);
                             ongoingEventsId.Add(eventId); 
-
-                            //Debug.Log("OPTIMIZED ASSIGNMENT");
-                            //Debug.Log("OP | Event No: " + totalEventCounter.ToString() + " | Drone: " + d.ToString() + " | Dest Event: " + eventId.ToString() );
-                            //Debug.Log("Drone " + d.ToString() + " respawn point changed to " + teleportId.ToString());
 
                             totalEventCounter++;
 
@@ -428,48 +426,20 @@ public class TrafficControl : MonoBehaviour
 
                     if (!droneFound && totalEventCounter<numDrones)
                     {
-                        //Debug.Log("Check 5.b");
-                        //Debug.Log(totalEventCounter);
 
                         int d = availableDronesId.Next();
                         Drone availableDrone = dronesDict[d];
-                        //Debug.Log("drone: " + d.ToString());
-
-                        //availableDrone.parkingPos = Utility.shelves[startingLaunchpadId];
-                        //availableDrone.curPos = Utility.shelves[startingLaunchpadId];
-
-                        //Debug.Log("direction: "+ availableDrone.direction);
-                        //Debug.Log("currpos " + availableDrone.parkingPos);
-                        //Debug.Log("hoverPos " + availableDrone.hoverPos);
 
                         availableDrone.AddEvent(eventsDict[shelfId]);
                         availableDrone.eventNo = totalEventCounter;
                         availableDrone.nextEvent = nextEventId;
                         availableDrone.spawnPos = Utility.parking[teleportId];
-
-                        // THIS HAS TO BE IT
-                        //Debug.Log("Event assigned");
-                        //Debug.Log("direction: " + availableDrone.direction);
-                        //Debug.Log("currpos " + availableDrone.parkingPos);
-                        //Debug.Log("hoverPos" + availableDrone.hoverPos);
-
-                        //availableDrone.parkingPos = Utility.parking[teleportId];
-                        //availableDrone.hoverPos = availableDrone.parkingPos + availableDrone.hoverShift;
-
-
-                        //Debug.Log("Update parking pos");
-                        //Debug.Log("direction: " + availableDrone.direction);
-                        //Debug.Log("currpos " + availableDrone.parkingPos);
-                        //Debug.Log("hoverPos" + availableDrone.hoverPos);
-
-                        //Debug.Log("drone: " + d.ToString());
+                        availableDrone.collionDroneId = collisionDroneId;
 
                         availableDronesId.Remove(d);
                         workingDronesId.Add(d);
                         waitingEventsID_Flightplan.Remove(e);
                         ongoingEventsId.Add(eventId);
-
-                        //Debug.Log("Drone " + d.ToString() + " respawn point changed to " + teleportId.ToString());
 
                         totalEventCounter++;
 
@@ -510,71 +480,134 @@ public class TrafficControl : MonoBehaviour
         foreach (int i in workingDronesId)
         {
             Drone droneA = dronesDict[i];
-            //Debug.Log("Drone Collision Loop 1");
-            foreach (int j in workingDronesId)
+            droneA.direction = Vector3.Normalize(droneA.dstPos - droneA.curPos);
+
+
+            //Debug.Log(droneA.collionDroneId);
+
+            if (ForceFollowCSV)
             {
-                if (i == j)
+                if (droneA.collionDroneId == -2)
                 {
                     continue;
                 }
-                //Debug.Log("Drone Collision Loop 2");
 
-                Drone droneB = dronesDict[j];
+                Drone droneB = dronesDict[droneA.collionDroneId];
 
                 Vector3 delta = droneA.gameObjectPointer.transform.Find("pCube2").gameObject.transform.position - droneB.gameObjectPointer.transform.Find("pCube2").gameObject.transform.position;
                 float dis = delta.magnitude;
 
-                if (dis < Utility.INTERACT_DIM)
+
+                if (dis < 10.0f)
                 {
-                    if (dis < Utility.BOUND_DIM)
+                    //Debug.Log("2. DroneID " + droneA.droneId + " Drone Collision");
+                    if (!droneA.isCollided && !droneB.isCollided)
                     {
-                        //Debug.Log("2. DroneID " + droneA.droneId + " Drone Collision");
-                        if (!droneA.isCollided && !droneB.isCollided)
+                        //droneA.gameObjectPointer.SetActive(false);
+                        //droneB.gameObjectPointer.SetActive(false);
+                        userError++;
+
+                        GameObject droneA_textHelperChild = droneA.gameObjectPointer.transform.Find("Text Helper").gameObject;
+                        TextMeshPro droneA_textHelper = droneA_textHelperChild.GetComponent<TextMeshPro>();
+                        droneA_textHelper.color = Color.red;
+
+                        GameObject droneB_textHelperChild = droneB.gameObjectPointer.transform.Find("Text Helper").gameObject;
+                        TextMeshPro droneB_textHelper = droneB_textHelperChild.GetComponent<TextMeshPro>();
+                        droneB_textHelper.color = Color.red;
+
+                        if (FlightDebugCol)
                         {
-                            //droneA.gameObjectPointer.SetActive(false);
-                            //droneB.gameObjectPointer.SetActive(false);
-                            userError++;
-
-                            GameObject droneA_textHelperChild = droneA.gameObjectPointer.transform.Find("Text Helper").gameObject;
-                            TextMeshPro droneA_textHelper = droneA_textHelperChild.GetComponent<TextMeshPro>();
-                            droneA_textHelper.color = Color.red;
-
-                            GameObject droneB_textHelperChild = droneB.gameObjectPointer.transform.Find("Text Helper").gameObject;
-                            TextMeshPro droneB_textHelper = droneB_textHelperChild.GetComponent<TextMeshPro>();
-                            droneB_textHelper.color = Color.red;
-
-                            if (FlightDebugCol)
-                            {
-                                Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  at POS {2}, {3}  | Status {4}, {5} =====", i, j, droneA.curPos.ToString("F2"), droneB.curPos,ToString(), droneA.status, droneB.status);
-                            }
-
-                            /*
-                            string [] rowDataTemp = new String[7];
-                            rowDataTemp[0] = droneA.eventNo.ToString();
-                            rowDataTemp[1] = droneA.droneId.ToString();
-                            rowDataTemp[2] = droneA.eventId.ToString();
-                            rowDataTemp[3] = droneB.eventNo.ToString();
-                            rowDataTemp[4] = droneB.droneId.ToString();
-                            rowDataTemp[5] = droneB.eventId.ToString();
-                            rowDataTemp[6] = timeCounter.ToString();                       
-                            rowData.Add(rowDataTemp);
-                            */
+                            Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  at POS {2}, {3}  | Status {4}, {5} =====", i, droneB.droneId, droneA.curPos.ToString("F2"), droneB.curPos, ToString(), droneA.status, droneB.status);
+                            //Debug.LogFormat("+++++ Unity Time {0}", timeCounter); 
                         }
 
-                        droneA.isCollided = true;
-                        droneB.isCollided = true;
+                        /*
+                        string [] rowDataTemp = new String[7];
+                        rowDataTemp[0] = droneA.eventNo.ToString();
+                        rowDataTemp[1] = droneA.droneId.ToString();
+                        rowDataTemp[2] = droneA.eventId.ToString();
+                        rowDataTemp[3] = droneB.eventNo.ToString();
+                        rowDataTemp[4] = droneB.droneId.ToString();
+                        rowDataTemp[5] = droneB.eventId.ToString();
+                        rowDataTemp[6] = timeCounter.ToString();                       
+                        rowData.Add(rowDataTemp);
+                        */
                     }
-                    else
+
+                    droneA.isCollided = true;
+                    droneB.isCollided = true;
+                }
+                else
+                {
+                    systemError++;
+                }
+                
+            }
+            else
+            {
+                foreach (int j in workingDronesId)
+                {
+                    Drone droneB = dronesDict[j];
+
+                    if (i == j)
                     {
-                        systemError++;
+                        continue;
+                    }
+                    //Debug.Log("Drone Collision Loop 2");
+
+
+                    Vector3 delta = droneA.gameObjectPointer.transform.Find("pCube2").gameObject.transform.position - droneB.gameObjectPointer.transform.Find("pCube2").gameObject.transform.position;
+                    float dis = delta.magnitude;
+
+                    if (dis < Utility.INTERACT_DIM)
+                    {
+                        if (dis < Utility.BOUND_DIM)
+                        {
+                            //Debug.Log("2. DroneID " + droneA.droneId + " Drone Collision");
+                            if (!droneA.isCollided && !droneB.isCollided)
+                            {
+                                //droneA.gameObjectPointer.SetActive(false);
+                                //droneB.gameObjectPointer.SetActive(false);
+                                userError++;
+
+                                GameObject droneA_textHelperChild = droneA.gameObjectPointer.transform.Find("Text Helper").gameObject;
+                                TextMeshPro droneA_textHelper = droneA_textHelperChild.GetComponent<TextMeshPro>();
+                                droneA_textHelper.color = Color.red;
+
+                                GameObject droneB_textHelperChild = droneB.gameObjectPointer.transform.Find("Text Helper").gameObject;
+                                TextMeshPro droneB_textHelper = droneB_textHelperChild.GetComponent<TextMeshPro>();
+                                droneB_textHelper.color = Color.red;
+
+                                if (FlightDebugCol)
+                                {
+                                    Debug.LogFormat("===== Drone {0}, Drone {1} | COLLISION  at POS {2}, {3}  | Status {4}, {5} =====", i, j, droneA.curPos.ToString("F2"), droneB.curPos, ToString(), droneA.status, droneB.status);
+                                }
+
+                                /*
+                                string [] rowDataTemp = new String[7];
+                                rowDataTemp[0] = droneA.eventNo.ToString();
+                                rowDataTemp[1] = droneA.droneId.ToString();
+                                rowDataTemp[2] = droneA.eventId.ToString();
+                                rowDataTemp[3] = droneB.eventNo.ToString();
+                                rowDataTemp[4] = droneB.droneId.ToString();
+                                rowDataTemp[5] = droneB.eventId.ToString();
+                                rowDataTemp[6] = timeCounter.ToString();                       
+                                rowData.Add(rowDataTemp);
+                                */
+                            }
+
+                            droneA.isCollided = true;
+                            droneB.isCollided = true;
+                        }
+                        else
+                        {
+                            systemError++;
+                        }
                     }
                 }
-
             }
 
             //Debug.Log("TEST");
-            //Debug.Log(droneA.direction);
-            droneA.direction = Vector3.Normalize(droneA.dstPos - droneA.curPos);
             //Debug.Log(droneA.direction);
             //Debug.Log("TEST");
         }
@@ -596,7 +629,7 @@ public class TrafficControl : MonoBehaviour
 
             Drone.MoveStatus moveStatus = currDrone.Move();
 
-            if (moveStatus == Drone.MoveStatus.END_TO_SHELF)  // drone status 2 --> 3
+            if (moveStatus == Drone.MoveStatus.END_TO_SHELF)  
             {
                 ongoingEventsId.Remove(currDrone.eventId);
                 if (!currDrone.isCollided)
